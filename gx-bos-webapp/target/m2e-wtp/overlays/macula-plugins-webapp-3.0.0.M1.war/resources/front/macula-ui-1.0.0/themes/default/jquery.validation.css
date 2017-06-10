@@ -1,0 +1,23 @@
+input.errors {
+	background-color: #FBC2C4;
+    border-color: #CC3300;
+}
+
+label.errors {
+	background-color: #FBE3E4;
+    color: #8A1F11;
+    border: 1px solid #FBC2C4;	
+}
+
+div.messages {
+    background: transparent url(images/msg_arrow.gif) no-repeat scroll left center;
+    padding-left: 7px;
+}
+
+div.errors {
+    background-color:#FBE3E4;
+    border-color: #924949;
+    border-style: solid solid solid none;
+    border-width: 1px;
+    padding: 1px 5px;
+}

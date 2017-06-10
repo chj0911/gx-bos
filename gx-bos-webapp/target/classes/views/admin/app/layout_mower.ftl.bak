@@ -1,0 +1,2740 @@
+<#--
+使用者可以通过覆盖这个文件实现对一些宏的重新定义包括：
+-- html head中的内容，包括meta css等
+<#macro mower_admin_head title = ''>
+-- LOGO
+<#macro mower_admin_header_logo>
+-- 菜单栏
+<#macro mower_admin_header_menu>
+-- 登录后提示信息
+<#macro mower_admin_header_login>
+-- 页脚
+<#macro mower_admin_footer>
+包含的Javascript(angularjs,knockoutjs,datagrid)
+<#macro mower_admin_scripts require = ''>
+-->
+
+<#--
+局部替换：如果以下变量定义在具体业务模板中，则会覆盖你的layout模板中的定义
+
+<#global mower_admin_scripts_addition>
+	加入你自己的javascript库文件
+</#global>
+
+<#global mower_admin_head_addition>
+	加入你自己的css文件
+</#global>
+-->
+
+<#macro mower_admin_header_menu>
+    <@jquery_scripts />
+<div class="header-menu">
+    <ul class="nav navbar-nav">
+        <#list adminMainMenu as mainMenu>
+            <#if (mainMenu_index<6)>
+                <li><a href="${base}/${(mainMenu.uri!"admin")}" mcode="${(mainMenu.code!"")}">${mainMenu.name!""}</a>
+                </li>
+            </#if>
+        </#list>
+        <li class="dropdown">
+            <#list adminMainMenu as mainMenu>
+                <#if (mainMenu_index == 6)>
+                    <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"
+                       href="${base}/${(mainMenu.uri!"admin")}" mcode="${(mainMenu.code!"")}">${mainMenu.name!""}<span
+                            class="caret"></span></a>
+                </#if>
+            </#list>
+            <ul class="dropdown-menu" role="menu">
+                <#list adminMainMenu as mainMenu>
+                    <#if (mainMenu_index >= 6)>
+                        <li><a href="${base}/${(mainMenu.uri!"admin")}"
+                               mcode="${(mainMenu.code!"")}">${mainMenu.name!""}</a></li>
+                    </#if>
+                </#list>
+            </ul>
+        </li>
+    </ul>
+</div>
+</#macro>
+
+<#macro message_img_list>
+    <span>
+        <#if imgList??>
+            <#list imgList as img>
+                <img src="${img}" id="img-${img_index}" style="width: 100px;height:100px" onclick="showPicModal(this)"/>
+            </#list>
+        </#if>
+    </span>
+
+<div id="pictureModal" class="modal fade " role="dialog" aria-labelledby="gridSystemModalLabel">
+    <div class="modal-dialog" role="document" style="width:700px;">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <h3 class="modal-title" id="gridSystemModalLabel">消息图片预览</h3>
+            </div>
+
+            <div class="modal-body">
+                <div class="container-fluid" >
+                    <div id="carousel-example-generic" class="carousel slide center-block" data-ride="carousel" data-interval=""
+                         style="width: 606px;height: 356px;border: 3px solid #459998;overflow: hidden">
+                        <!-- Indicators data-interval设置时间间隔 -->
+                        <ol class="carousel-indicators">
+                            <#if imgList??>
+                                <#list imgList as img>
+                                    <#if (img_index==0)>
+                                        <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
+                                    <#else>
+                                        <li data-target="#carousel-example-generic" data-slide-to="${img_index}"></li>
+                                    </#if>
+                                </#list>
+                            </#if>
+                        </ol>
+
+                        <!-- Wrapper for slides -->
+                        <div class="carousel-inner " role="listbox" style="height:100%">
+                            <#if imgList??>
+                                <#list imgList as img>
+                                    <#if (img_index==0)>
+                                        <div class="item active" style="height:100%">
+                                            <img src="${img}" id="img-${img_index}" style="margin:auto;height:100%"/>
+                                            <div class="carousel-caption"></div>
+                                        </div>
+                                    <#else>
+                                        <div class="item" style="height:100%">
+                                            <img src="${img}" id="img-${img_index}"  style="margin:auto;height:100%"/>
+                                            <div class="carousel-caption"></div>
+                                        </div>
+                                    </#if>
+                                </#list>
+                            </#if>
+                        </div>
+
+                        <!-- Controls -->
+                        <a class="left carousel-control custom-carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+                            <span class="fa fa-chevron-left" aria-hidden="true"></span>
+                            <span class="sr-only">Previous</span>
+                        </a>
+                        <a class="right carousel-control custom-carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+                            <span class="fa fa-chevron-right" aria-hidden="true"></span>
+                            <span class="sr-only">Next</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var showPicModal = function(e){
+        $('#pictureModal').modal('show');
+    };
+</script>
+</#macro>
+
+<#-- 人员信息选择弹出框 assignId：弹出框关联模块id  assignType：弹出框关联模块类型 parentTableId：保存之后刷新表格数据id-->
+<#macro findUser assignId assignType parentTableId >
+<div class="modal fade bs-example-modal-lg" role="dialog" aria-labelledby="findUserModalLabel" id="myAssignModal">
+    <input type="hidden" id="myAssignId" value="${assignId}"/>
+    <input type="hidden" id="myAssignType" value="${assignType}"/>
+    <input type="hidden" id="parentTableId" value="${parentTableId}"/>
+
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h4 class="modal-title" id="findUserModalLabel">选择人员</h4>
+            </div>
+
+            <div class="col-xs-12 col-md-12" style="text-align:right; margin-top: 10px">
+                <div class="row">
+                    姓名/卡号:
+                    <input type="text" class="input-sm" id="findUser_userName" maxlength="20"/>
+                    <a id="findUser_search" class="btn btn-default" style="margin-right: 10px">
+                        <i class="fa fa-search fa-lg"></i>
+                        查询
+                    </a>
+                </div>
+            </div>
+            <div class="col-xs-12 col-md-12" style="text-align:left; margin-top: 10px">
+                <div class="row">
+                    <div class="col-xs-4 col-md-4">
+                        <div class="portlet-body">
+                            <div class="panel-group accordion" id="user_accordion">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <a class="accordion-toggle" data-toggle="collapse"
+                                               data-parent="#user_accordion" href="#user_collapse_1"
+                                               aria-expanded="true">部门体系</a>
+                                        </h4>
+                                    </div>
+                                    <div id="user_collapse_1" class="panel-collapse collapse in" aria-expanded="true"
+                                    >
+                                        <div class="panel-body">
+                                            <div id="user_jstree_organization" style="height:350px;overflow:auto"></div>
+                                            <input type="hidden" id="user_organization">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <a class="accordion-toggle collapsed" data-toggle="collapse"
+                                               data-parent="#user_accordion" href="#user_collapse_2"
+                                               aria-expanded="false"> 岗位体系 </a>
+                                        </h4>
+                                    </div>
+                                    <div id="user_collapse_2" class="panel-collapse collapse" aria-expanded="false">
+                                        <div class="panel-body">
+                                            <div id="user_jstree_postTypes" style="height:350px;overflow:auto"></div>
+                                            <input type="hidden" id="user_postTypes">
+                                        </div>
+                                    </div>
+                                </div>
+                                <#--<div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <a class="accordion-toggle collapsed" data-toggle="collapse"
+                                               data-parent="#user_accordion" href="#user_collapse_3"
+                                               aria-expanded="false"> 群组 </a>
+                                        </h4>
+                                    </div>
+                                    <div id="user_collapse_3" class="panel-collapse collapse" aria-expanded="false">
+                                        <div class="panel-body">
+                                            <div id="user_jstree_group" style="height:350px;overflow:auto"></div>
+                                            <input type="hidden" id="user_group">
+                                        </div>
+                                    </div>
+                                </div>-->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-8 col-md-8">
+                        <div class="row">
+                            <div class="col-md-5">
+                                <div class="panel panel-default" style="height:100%">
+                                    <div class="panel-heading">
+                                        <h5 class="panel-title">待选人员
+                                        </h5>
+                                    </div>
+                                    <select name="from" id="user_multiselect" class="form-control" size="18" multiple="multiple">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2" style="height:100%;vertical-align:middle">
+                                <button type="button" id="user_multiselect_rightSelected" class="btn btn-block">选择</button>
+                                <button type="button" id="user_multiselect_rightAll" class="btn btn-block">全选</button>
+                                <button type="button" id="user_multiselect_leftSelected" class="btn btn-block">移除</button>
+                                <button type="button" id="user_multiselect_leftAll" class="btn btn-block">清空</button>
+                            </div>
+                            <div class="col-md-5" style="height:100%">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h5 class="panel-title">已选人员
+                                        </h5>
+                                    </div>
+                                    <select name="to" id="user_multiselect_to" class="form-control" size="18" multiple="multiple"></select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" onclick="saveFoundUser()">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var saveFoundUser = function () {
+        var $myUserTable = $('#myUserTable');
+        var myAssignId = $('#myAssignId').val(), myAssignType = $('#myAssignType').val(),
+                parentTableId = $('#parentTableId').val();
+        var row = $("#user_multiselect_to option");
+        if (!row || row.length == 0) {
+            ModalBox.alert('请选择一条数据');
+            return;
+        }
+        var userList = new Array();
+        for (var i = 0; i < row.length; i++) {
+            userList.push(row[i].value);
+        }
+        var param = {
+            userNames: userList,
+            id: myAssignId
+        };
+
+        var url = base + '/admin/usercenter/' + myAssignType + '/saveuser';
+        if (myAssignType == 'user') {
+            $('#leaderAccount').val(row[0].value);
+            $('#myAssignModal').modal('hide');
+            return;
+        } else if (myAssignType == 'message') {
+            for (var i = 0; i < row.length; i++) {
+                var li = $('#addressee-user-' + row[i].value);
+                if (li == undefined || li == '' || li.length < 1) {
+                    document.getElementById('addresseeUl').innerHTML += '<li class="search-choice" ' +
+                            'aname="' + row[i].text + '" atype="USERNAME" addressee="' + row[i].value + '" id="addressee-user-' + row[i].value + '">' +
+                            '<span>' + row[i].text + '</span>' +
+                            '<a class="search-choice-close" onclick="$(this).parent().remove();"></a>' +
+                            '</li>';
+                }
+            }
+            $('#myAssignModal').modal('hide');
+            return;
+        } else if (myAssignType == 'role') {
+            var roleId = $("#roleId-role-assigned").val();
+
+            $.post(base + '/admin/usercenter/role/create?rolePeople=' + userList + '&roleId=' + roleId, function (data) {
+
+                if (data.returnObject == true) {
+                    $('#myAssignModal').modal('hide');
+
+                    $('#' + parentTableId).DataTable().ajax.reload();
+                }
+            });
+
+            return;
+        } else if (myAssignType == 'visitRole') {
+            var roleId = $("#roleId").val();
+
+            $.post(base + '/admin/signUp/role/create?rolePeople=' + userList + '&roleId=' + roleId, function (data) {
+
+                if (data.returnObject == true) {
+                    $('#myAssignModal').modal('hide');
+
+                    $('#' + parentTableId).DataTable().ajax.reload();
+                }
+            });
+
+            return;
+        }else if(myAssignType == 'commentManager'){
+            var personId = $("#user_multiselect_to option").map(function(){return $(this).val();}).get().join(",")
+            var commentManagerId = $("#myAssignId").val();
+            $.ajax({
+                type: 'post',
+                url: base + '/admin/coursecenter/coursemanager/commentManager/saveCommentManager?commentManagerId='+ commentManagerId +"&userNames=" + personId,
+                dataType: 'json',
+                contentType: 'application/json;charset=utf-8',
+                success: function (response) {
+                    $('#myAssignModal').modal('hide');
+
+                    var userNames = personId.split(",")
+                    var context = "";
+                    for(var i = 0; i<userNames.length; i++){
+                        context += '<span class="tag">' + userNames[i] +  '<i>X</i>';
+                    }
+
+                    $("#typeQuestionAddId").append(context);
+
+                    $("#list-course-list").DataTable().ajax.reload();
+                }
+            });
+            return;
+
+        }else if(myAssignType == 'exam'){
+            var personId = $("#user_multiselect_to option").map(function(){return $(this).val();}).get().join(",");
+            var examId = $("#examId").val();
+            $.ajax({
+                type: 'post',
+                url: base + '/admin/exam/examInfo/saveExamJude/'+ examId +"/" + personId,
+                dataType: 'json',
+                contentType: 'application/json;charset=utf-8',
+                success: function (response) {
+                    $("#myAssignModal").modal("hide");
+                    var userNames = personId.split(",")
+                    var context = "";
+                    var userIndex=0;
+                    for(var i = 0; i<userNames.length; i++){
+                        var span=$("#typeQuestionAddId span[id='"+userNames[i]+"']");
+                        if (span.html() == undefined || null==span.html()) {
+                            if(userIndex==10){
+                                userIndex=1;
+                                context+="</br>";
+                            }
+                            context += '<span class="tag" id="'+userNames[i]+'">' + $("#user_multiselect_to option[value='"+userNames[i]+"']").text() +  '<i onclick="$(this).parent().remove();">X</i></span>';
+                            userIndex++;
+                        }
+                     }
+                    $("#typeQuestionAddId").append(context);
+                }
+            });
+            return;
+        }
+
+        $.ajax({
+            type: 'post',
+            url: url,
+            data: JSON.stringify(param),
+            dataType: 'json',
+            contentType: 'application/json;charset=utf-8',
+            success: function (response) {
+                $('#myAssignModal').modal('hide');
+                if (parentTableId) {
+                    $('#' + parentTableId).DataTable().ajax.reload();
+                }
+            }
+        });
+    };
+    $(function () {
+        var orgTreeTypes = [];
+        var postTreeTypes = [];
+        var groupTreeTypes = [];
+
+        var myAssignType = $('#myAssignType').val();
+        var $myUserTable = $('#myUserTable');
+
+
+        $('#findUser_search').click(function(){
+            var $jstree=$('div[id="myAssignModal"] div div div div div div div div div[class="panel-collapse collapse in"] div div');
+            if(!$jstree){
+                Modal.alert("请选择左侧体系");
+            }
+            var selectId = $jstree.jstree().get_selected();
+            var $jstreeId = $jstree[0].id;
+            var $selectUsers = $("#user_multiselect_to option");
+            var selectedUserNameList = new Array();
+            if($selectUsers && $selectUsers.length > 0){
+                for(var i=0; i<$selectUsers.length; i++){
+                    selectedUserNameList.push($selectUsers[i].value);
+                }
+            }
+            var url = "";
+            if($jstreeId == 'user_jstree_organization'){
+                url = base + '/admin/usercenter/role/organization/search';
+            }else if($jstreeId == 'user_jstree_postTypes'){
+                url = base + '/admin/usercenter/post/user/search';
+            }else if($jstreeId == 'user_jstree_group'){
+                url = base + '/admin/usercenter/group/user/search';
+            }
+            if(selectId && selectId.length > 0) {
+                var param = {
+                    selectId: selectId[0],
+                    relationType: myAssignType,
+                    relationId: $('#myAssignId').val(),
+                    selectedList: selectedUserNameList,
+                    queryThing: $('#findUser_userName').val()
+                };
+                $.ajax({
+                    type: 'post',
+                    url: url,
+                    data: JSON.stringify(param),
+                    dataType: 'json',
+                    contentType: 'application/json;charset=utf-8',
+                    success: function (response) {
+                        $("#user_multiselect").empty();
+                        var selObj = $("#user_multiselect");
+                        var str = "";
+                        for (var i = 0; i <= response.content.length - 1; i++) {
+                            str += "<option value='" + response.content[i].userName + "'>" + response.content[i].userRealName + "</option>"
+                        }
+                        selObj.append(str);
+                    }
+                });
+            }
+        });
+
+        $('#myAssignModal').on('show.bs.modal', function () {
+            $("#user_multiselect").empty();
+            $("#user_multiselect_to").empty();
+            $('#findUser_userName').val('');
+
+            $.getJSON(base + '/admin/usercenter/role/organization/findAllOrgTypes', function (data) {
+                var orgList = data.returnObject;
+
+                for (var i = 0; i < orgList.length; i++) {
+
+                    orgTreeTypes.push({
+                        id: orgList[i].id,
+                        text: orgList[i].name,
+                        data: orgList[i],
+                        parent: (orgList[i].parentId ? orgList[i].parentId : '#')
+                    });
+                }
+                $('#user_jstree_organization').jstree({
+                    'core': {
+                        'data': orgTreeTypes
+                    }
+                });
+                $('#user_jstree_organization').on('loaded.jstree', function (e, data) {
+                    $('#user_jstree_organization').jstree('open_all');
+                });
+                $('#user_jstree_organization').on('changed.jstree', function (e, data) {
+                    var url = base + '/admin/usercenter/role/organization/search';
+                    var $selectUsers = $("#user_multiselect_to option");
+                    var selectedUserNameList = new Array();
+                    if($selectUsers && $selectUsers.length > 0){
+                        for(var i=0; i<$selectUsers.length; i++){
+                            selectedUserNameList.push($selectUsers[i].value);
+                        }
+                    }
+                    var param = {
+                        selectId : data.node.data.id,
+                        relationType : myAssignType,
+                        relationId : $('#myAssignId').val(),
+                        selectedList : selectedUserNameList,
+                        queryThing: $('#findUser_userName').val()
+                    };
+                    $.ajax({
+                        type: 'post',
+                        url: url,
+                        data: JSON.stringify(param),
+                        dataType: 'json',
+                        contentType: 'application/json;charset=utf-8',
+                        success: function (response) {
+                            $("#user_multiselect").empty();
+                            var selObj = $("#user_multiselect");
+                            var str = "";
+                            for (var i = 0; i <= response.content.length-1; i++) {
+                                str += "<option value='" + response.content[i].userName + "'>" + response.content[i].userRealName + "</option>"
+                            }
+                            selObj.append(str);
+                        }
+                    });
+                });
+            });
+
+            //获取属于岗位体系的人员
+            $.getJSON(base + '/admin/usercenter/user/findAllPosts', function (data) {
+                var depList = data.returnObject;
+
+                for (var i = 0; i < depList.length; i++) {
+                    postTreeTypes.push({
+                        id: depList[i].code,
+                        text: depList[i].label,
+                        data: depList[i],
+                        parent: (depList[i].parentId ? depList[i].parentId : '#')
+                    });
+                }
+
+                $('#user_jstree_postTypes').jstree({
+                    'core': {
+                        'data': postTreeTypes
+                    }
+                });
+                $('#user_jstree_postTypes').on('loaded.jstree', function (e, data) {
+                    $('#user_jstree_postTypes').jstree('open_all');
+                });
+                $('#user_jstree_postTypes').on('changed.jstree', function (e, data) {
+
+                    var url = base + '/admin/usercenter/user/post/search';
+                    var $selectUsers = $("#user_multiselect_to option");
+                    var selectedUserNameList = new Array();
+                    if($selectUsers && $selectUsers.length > 0){
+                        for(var i=0; i<$selectUsers.length; i++){
+                            selectedUserNameList.push($selectUsers[i].value);
+                        }
+                    }
+                    var param = {
+                        selectId : data.node.data.code,
+                        relationType : myAssignType,
+                        relationId : $('#myAssignId').val(),
+                        selectedList : selectedUserNameList,
+                        queryThing: $('#findUser_userName').val()
+                    };
+                    $.ajax({
+                        type: 'post',
+                        url: url,
+                        data: JSON.stringify(param),
+                        dataType: 'json',
+                        contentType: 'application/json;charset=utf-8',
+                        success: function (response) {
+                            $("#user_multiselect").empty();
+                            var selObj = $("#user_multiselect");
+                            var str = "";
+                            for (var i = 0; i <= response.content.length-1; i++) {
+                                str += "<option value='" + response.content[i].userName + "'>" + response.content[i].userRealName + "</option>"
+                            }
+                            selObj.append(str);
+                        }
+                    });
+                });
+            });
+
+            //获取属于群组中的人员
+            /*$.getJSON(base + '/admin/usercenter/group/findEffectiveGroups', function (data) {
+                var list = data.returnObject;
+                for (var i = 0; i < list.length; i++) {
+                    groupTreeTypes.push({
+                        id: list[i].id,
+                        text: list[i].name,
+                        data: list[i],
+                        parent: (list[i].parentId ? list[i].parentId : '#')
+                    });
+                }
+
+                $('#user_jstree_group').jstree({
+                    'core': {
+                        'data': groupTreeTypes
+                    }
+                });
+                $('#user_jstree_group').on('loaded.jstree', function (e, data) {
+                    $('#user_jstree_group').jstree('open_all');
+                });
+                $('#user_jstree_group').on('changed.jstree', function (e, data) {
+                    var url = base + '/admin/usercenter/group/user/search';
+                    var $selectUsers = $("#user_multiselect_to option");
+                    var selectedUserNameList = new Array();
+                    if($selectUsers && $selectUsers.length > 0){
+                        for(var i=0; i<$selectUsers.length; i++){
+                            selectedUserNameList.push($selectUsers[i].value);
+                        }
+                    }
+                    var param = {
+                        selectId : data.node.data.id,
+                        relationType : myAssignType,
+                        relationId : $('#myAssignId').val(),
+                        selectedList : selectedUserNameList,
+                        queryThing: $('#findUser_userName').val()
+                    };
+                    $.ajax({
+                        type: 'post',
+                        url: url,
+                        data: JSON.stringify(param),
+                        dataType: 'json',
+                        contentType: 'application/json;charset=utf-8',
+                        success: function (response) {
+                            $("#user_multiselect").empty();
+                            var selObj = $("#user_multiselect");
+                            var str = "";
+                            for (var i = 0; i <= response.content.length-1; i++) {
+                                str += "<option value='" + response.content[i].userName + "'>" + response.content[i].userRealName + "</option>"
+                            }
+                            selObj.append(str);
+                        }
+                    });
+                });
+            });*/
+            $('#user_multiselect').multiselect();
+        });
+    });
+</script>
+</#macro>
+<#macro findUserForSignUp assignId assignType parentTableId signUpId>
+<div class="modal fade bs-example-modal-lg" role="dialog" aria-labelledby="findUserModalLabel" id="myAssignModal">
+    <input type="hidden" id="myAssignId" value="${assignId}"/>
+    <input type="hidden" id="signUpId" value="${signUpId}"/>
+    <input type="hidden" id="myAssignType" value="${assignType}"/>
+    <input type="hidden" id="parentTableId" value="${parentTableId}"/>
+
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h4 class="modal-title" id="findUserModalLabel">选择人员</h4>
+            </div>
+            <div class="col-xs-12 col-md-12">
+                <div class="col-xs-12 col-md-12" style="text-align:left;margin: 5">
+                    <div class="col-xs-4 col-md-4">
+                        <div class="portlet-body">
+                            <div class="panel-group accordion" id="user_accordion">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <a class="accordion-toggle" data-toggle="collapse"
+                                               data-parent="#user_accordion" href="#user_collapse_1"
+                                               aria-expanded="true">部门体系</a>
+                                        </h4>
+                                    </div>
+                                    <div id="user_collapse_1" class="panel-collapse collapse in" aria-expanded="true"
+                                    >
+                                        <div class="panel-body" >
+                                            <div id="user_jstree_organization" style="height:350px;overflow:auto"></div>
+                                            <input type="hidden" id="user_organization">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <a class="accordion-toggle collapsed" data-toggle="collapse"
+                                               data-parent="#user_accordion" href="#user_collapse_2"
+                                               aria-expanded="false"> 岗位体系 </a>
+                                        </h4>
+                                    </div>
+                                    <div id="user_collapse_2" class="panel-collapse collapse" aria-expanded="false">
+                                        <div class="panel-body">
+                                            <div id="user_jstree_postTypes" style="height:350px;overflow:auto"></div>
+                                            <input type="hidden" id="user_postTypes">
+                                        </div>
+                                    </div>
+                                </div>
+                                <#--<div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <a class="accordion-toggle collapsed" data-toggle="collapse"
+                                               data-parent="#user_accordion" href="#user_collapse_3"
+                                               aria-expanded="false"> 群组 </a>
+                                        </h4>
+                                    </div>
+                                    <div id="user_collapse_3" class="panel-collapse collapse" aria-expanded="false">
+                                        <div class="panel-body">
+                                            <div id="user_jstree_group" style="height:350px;overflow:auto"></div>
+                                            <input type="hidden" id="user_group">
+                                        </div>
+                                    </div>
+                                </div>-->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-8 col-md-8">
+                        <table id="myUserTable" class="table table-striped table-hover table-bordered" width="100%"
+                               data-serverSide="true"
+                               data-paging="true" data-language-emptyTable="没有数据"
+                               data-ordering="false"
+                               data-ajax-type="get"
+                               data-row-id="id"
+                               data-select-style="multiple"
+                               data-select-info="false"
+                               role="grid"
+                               rel="datatables"
+                               data-ajax-url="${base}/admin/usercenter/user/nosearch"
+                        >
+                            <thead>
+                            <tr>
+                                <th data-name="userName">用户名</th>
+                                <th data-name="userRealName">用户名</th>
+                                <th data-name="userNo">用户名</th>
+                            </tr>
+                            </thead>
+                        </table>
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" onclick="closeMyAssign()">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var closeMyAssign = function () {
+        var $myUserTable = $('#myUserTable'), param;
+        var myAssignId = $('#myAssignId').val(), myAssignType = $('#myAssignType').val(),
+                parentTableId = $('#parentTableId').val();
+        var row = $myUserTable.DataTable().selectedRows();
+        if (!row || row.length == 0) {
+            ModalBox.alert('请选择一条数据');
+            return;
+        }
+        var userList = new Array();
+        if (myAssignType == 'signUpTrain') {
+            for (var i = 0; i < row.length; i++) {
+                userList.push({
+                    nameStr: row[i].name,
+                    username: row[i].userName,
+                    sex: row[i].sex,
+                    cardNo: row[i].cardNo,
+                    rank: row[i].rank,
+                    officePost: row[i].officePost,
+                    mobile: row[i].mobile
+                });
+            }
+            param = {
+                userNames: userList,
+                id: $("#signUpId").val()
+            };
+        } else {
+            for (var i = 0; i < row.length; i++) {
+                userList.push(row[i].userName);
+            }
+            param = {
+                userNames: userList,
+                id: myAssignId
+            };
+        }
+
+        var url = base;
+        var url = '/admin/usercenter/' + myAssignType + '/saveuser';
+        if (myAssignType == 'user') {
+            $('#leaderAccount').val(row[0].userName);
+            $('#myAssignModal').modal('hide');
+            return;
+        }
+        if (myAssignType == "signUpTrain") {
+            url = '/eln/admin/signUp/train/saveUser';
+            $.ajax({
+                type: 'post',
+                url: url,
+                data: JSON.stringify(param),
+                dataType: 'json',
+                contentType: 'application/json;charset=utf-8',
+                success: function (response) {
+                    $('#myAssignModal').modal('hide');
+                    if (parentTableId) {
+                        $('#' + parentTableId).DataTable().ajax.reload();
+                    }
+                }
+            });
+        } else {
+            $.ajax({
+                type: 'post',
+                url: url,
+                data: JSON.stringify(param),
+                dataType: 'json',
+                contentType: 'application/json;charset=utf-8',
+                success: function (response) {
+                    $('#myAssignModal').modal('hide');
+                    if (parentTableId) {
+                        $('#' + parentTableId).DataTable().ajax.reload();
+                    }
+                }
+            });
+        }
+
+
+    };
+    $(function () {
+        var orgTreeTypes = [];
+        var postTreeTypes = [];
+        var groupTreeTypes = [];
+
+        var myAssignType = $('#myAssignType').val();
+        var $myUserTable = $('#myUserTable');
+
+        $('#myAssignModal').on('show.bs.modal', function () {
+            $myUserTable.DataTable().ajax.url(base + '/admin/usercenter/user/nosearch').load();
+            $.getJSON(base + '/admin/usercenter/role/organization/findAllOrgTypes', function (data) {
+                var orgList = data.returnObject;
+
+                for (var i = 0; i < orgList.length; i++) {
+
+                    orgTreeTypes.push({
+                        id: orgList[i].id,
+                        text: orgList[i].name,
+                        data: orgList[i],
+                        parent: (orgList[i].parentId ? orgList[i].parentId : '#')
+                    });
+                }
+                $('#user_jstree_organization').jstree({
+                    'core': {
+                        'data': orgTreeTypes
+                    }
+                });
+                $('#user_jstree_organization').on('loaded.jstree', function (e, data) {
+                    $('#user_jstree_organization').jstree('open_all');
+                });
+                $('#user_jstree_organization').on('changed.jstree', function (e, data) {
+                    $myUserTable.DataTable().ajax.url(base + '/admin/usercenter/role/organization/search?typeParentId='
+                            + data.node.data.oaId + '&assignType=' + myAssignType + '&assignId=' + $('#myAssignId').val()).load();
+                });
+            });
+
+            //获取属于岗位体系的人员
+            $.getJSON(base + '/admin/usercenter/user/findAllPosts', function (data) {
+                var depList = data.returnObject;
+
+                for (var i = 0; i < depList.length; i++) {
+                    postTreeTypes.push({
+                        id: depList[i].code,
+                        text: depList[i].label,
+                        data: depList[i],
+                        parent: (depList[i].parentId ? depList[i].parentId : '#')
+                    });
+                }
+
+                $('#user_jstree_postTypes').jstree({
+                    'core': {
+                        'data': postTreeTypes
+                    }
+                });
+                $('#user_jstree_postTypes').on('loaded.jstree', function (e, data) {
+                    $('#user_jstree_postTypes').jstree('open_all');
+                });
+                $('#user_jstree_postTypes').on('changed.jstree', function (e, data) {
+                    $myUserTable.DataTable().ajax.url(base + '/admin/usercenter/post/user/search?typeId='
+                            + data.node.data.id + '&assignType=' + myAssignType + '&assignId=' + $('#myAssignId').val()).load();
+
+                });
+            });
+
+            /*//获取属于群组中的人员
+            $.getJSON(base + '/admin/usercenter/group/findEffectiveGroups', function (data) {
+                var list = data.returnObject;
+                for (var i = 0; i < list.length; i++) {
+                    groupTreeTypes.push({
+                        id: list[i].id,
+                        text: list[i].name,
+                        data: list[i],
+                        parent: (list[i].parentId ? list[i].parentId : '#')
+                    });
+                }
+
+                $('#user_jstree_group').jstree({
+                    'core': {
+                        'data': groupTreeTypes
+                    }
+                });
+                $('#user_jstree_group').on('loaded.jstree', function (e, data) {
+                    $('#user_jstree_group').jstree('open_all');
+                });
+                $('#user_jstree_group').on('changed.jstree', function (e, data) {
+                    $myUserTable.DataTable().ajax.url(base + '/admin/usercenter/group/user/search?typeParentId='
+                            + data.node.data.id + '&assignType=' + myAssignType + '&assignId=' + $('#myAssignId').val()).load();
+                });
+            });*/
+
+        });
+    });
+</script>
+</#macro>
+
+<#-- 群组选择弹出框 assignId：弹出框关联模块id  assignType：弹出框关联模块类型 parentTableId：保存之后刷新表格数据id  findGroupSaveUrl:保存选中数据url callback:回调方法名(和findGroupSaveUrl必须二选一) -->
+<#-- callback方法会将选中群组信息以数组参数形式回调调用者指定的函数,[{value:1,name:'群组1'},{value:2,name:'群组2'}] -->
+<#macro findGroup findGroupId findGroupType findGroupParentTableId findGroupSaveUrl callback>
+<div class="modal fade bs-example-modal-lg" role="dialog" aria-labelledby="findUserModalLabel" id="findGroup">
+    <input type="hidden" id="findGroupId" value="${findGroupId}"/>
+    <input type="hidden" id="findGroupType" value="${findGroupType}"/>
+    <input type="hidden" id="findGroupParentTableId" value="${findGroupParentTableId}"/>
+    <input type="hidden" id="findGroupSaveUrl" value="${findGroupSaveUrl}"/>
+    <input type="hidden" id="callback" value="${callback}"/>
+
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h4 class="modal-title" id="findUserModalLabel">选择群组</h4>
+            </div>
+            <div class="col-xs-12 col-md-12" style="text-align:left; margin-top: 10px">
+                <div class="row">
+                    <div class="col-xs-4 col-md-4">
+                        <div class="portlet-body">
+                            <div class="panel-group accordion" id="user_accordion">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <a class="accordion-toggle" data-toggle="collapse"
+                                               data-parent="#user_accordion" href="#user_collapse_1"
+                                               aria-expanded="true">群组类型</a>
+                                        </h4>
+                                    </div>
+                                    <div id="user_collapse_1" class="panel-collapse collapse in" aria-expanded="true"
+                                            >
+                                        <div class="panel-body">
+                                            <div id="usergroup_jstree_group" style="height:350px;overflow:auto"></div>
+                                            <input type="hidden" id="user_group">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-8 col-md-8">
+                        <div class="row">
+                            <div class="col-md-5">
+                                <div class="panel panel-default" style="height:100%">
+                                    <div class="panel-heading">
+                                        <h5 class="panel-title">待选群组
+                                        </h5>
+                                    </div>
+                                    <select name="from" id="group_multiselect" class="form-control" size="18" multiple="multiple">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2" style="height:100%;vertical-align:middle">
+                                <button type="button" id="group_multiselect_rightSelected" class="btn btn-block">选择</button>
+                                <button type="button" id="group_multiselect_rightAll" class="btn btn-block">全选</button>
+                                <button type="button" id="group_multiselect_leftSelected" class="btn btn-block">移除</button>
+                                <button type="button" id="group_multiselect_leftAll" class="btn btn-block">清空</button>
+                            </div>
+                            <div class="col-md-5" style="height:100%">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h5 class="panel-title">已选群组
+                                        </h5>
+                                    </div>
+                                    <select name="to" id="group_multiselect_to" class="form-control" size="18" multiple="multiple"></select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" onclick="saveFoundGroup()">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var saveFoundGroup = function () {
+    	
+        var myAssignId = $('#findGroupId').val(), myAssignType = $('#findGroupType').val(),
+                parentTableId = $('#findGroupParentTableId').val();
+        var selectedRows = $("#group_multiselect_to option");
+        if (!selectedRows || selectedRows.length == 0) {
+            ModalBox.alert('请选择一条数据');
+            return;
+        }
+
+        if($('#findGroupSaveUrl').val()){
+	        var groupList = new Array();
+	        for (var i = 0; i < selectedRows.length; i++) {
+	            groupList.push(selectedRows[i].value);
+	        }
+	        var param = {
+	            groupIds: groupList,
+	            id: myAssignId
+	        };
+	        
+	        if(myAssignType == 'plan'){
+	            param = {
+	                groupIds: groupList,
+	                id: myAssignId,
+	                olds:oldUser
+	            }
+	        }
+	        
+	        $.ajax({
+	            type: 'post',
+	            url: base + '/admin' + $('#findGroupSaveUrl').val(),
+	            data: JSON.stringify(param),
+	            dataType: 'json',
+	            contentType: 'application/json;charset=utf-8',
+	            success: function (response) {
+	                
+	                if (parentTableId) {
+	                	$('#findGroup').modal('hide');
+	                    $('#div-' + parentTableId).show();
+	                    $('#' + parentTableId).DataTable().ajax.reload();
+	                }
+	            }
+	        });        	
+        }else if( $('#callback').val() ){
+        	var param = new Array();
+        	for (var i = 0; i < selectedRows.length; i++) {
+        		var item = {
+        			value:selectedRows[i].value,
+        			name:selectedRows[i].text
+        		};
+	            param.push(item);
+	        }
+	        //回调,将选中的群组信息以数组参数传递给调用者
+        	eval($('#callback').val()).call(null,param);
+            $('#findGroup').modal('hide');
+        }
+    };
+    $(function () {
+        var usergroupTreeType = [];
+
+        $('#findGroup').on('show.bs.modal', function () {
+            $("#group_multiselect").empty();
+            $("#group_multiselect_to").empty();
+            $.getJSON(base + '/admin/usercenter/group/findUserGroups', function (data) {
+                var groupList = data.returnObject;
+                for (var i = 0; i < groupList.length; i++) {
+                    usergroupTreeType.push({
+                        id: groupList[i].id,
+                        text: groupList[i].groupName,
+                        data: groupList[i],
+                        parent: (groupList[i].parentId ? groupList[i].parentId : '#')
+                    });
+                }
+                $('#usergroup_jstree_group').jstree({
+                    'core': {
+                        'data': usergroupTreeType
+                    }
+                });
+                $('#usergroup_jstree_group').on('loaded.jstree', function (e, data) {
+                    $('#usergroup_jstree_group').jstree('open_all');
+                });
+                $('#usergroup_jstree_group').on('changed.jstree', function (e, data) {
+                    var row = $("#group_multiselect_to option");
+                    var selectedGroups = new Array();
+                    for (var i = 0; i < row.length; i++) {
+                        selectedGroups.push(row[i].value);
+                    }
+                    $("#group_multiselect").empty();
+                    var selObj = $("#group_multiselect");
+                    var str = "";
+                    var userGroupList = data.node.data.dealerGroupResults;
+                    for (var i = 0; i <= userGroupList.length-1; i++) {
+                        if(!containsGroupId(selectedGroups,userGroupList[i].id)){
+                            str += "<option value='" + userGroupList[i].id + "'>" + userGroupList[i].groupName + "</option>"
+                        }
+                    }
+                    selObj.append(str);
+                });
+            });
+
+            $('#group_multiselect').multiselect();
+        });
+    });
+    function containsGroupId(a, obj) {
+        var i = a.length;
+        while (i--) {
+            if (a[i] == obj) {
+                return true;
+            }
+        }
+        return false;
+    }
+</script>
+</#macro>
+
+
+<#-- 用户规则选择弹出框 findUserRuleId：弹出框关联模块id  findUserRuleType：弹出框关联模块类型 findUserRuleParentTableId：保存之后刷新表格数据id- -->
+<#macro findUserRule findUserRuleId findUserRuleType findUserRuleParentTableId>
+<div class="modal fade bs-example-modal-lg" role="dialog" aria-labelledby="findUserRuleModalLabel" id="findUserRule">
+    <input type="hidden" id="findUserRuleId" value="${findUserRuleId}"/>
+    <input type="hidden" id="findUserRuleType" value="${findUserRuleType}"/>
+    <input type="hidden" id="findUserRuleParentTableId" value="${findUserRuleParentTableId}"/>
+
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h4 class="modal-title" id="findUserRuleModalLabel">选择用户规则</h4>
+            </div>
+            <div class="col-xs-12 col-md-12">
+                <div class="col-xs-12 col-md-12" style="text-align:left;margin: 5">
+                    <div class="col-xs-4 col-md-4" hidden="true">
+                        <div class="portlet-body">
+                            <div class="panel-group accordion" id="user_rule_accordion">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <a class="accordion-toggle" data-toggle="collapse"
+                                               data-parent="#user_rule_accordion" href="#UserRule_collapse_1"
+                                               aria-expanded="false"> 用户规则类型 </a>
+                                        </h4>
+                                    </div>
+                                    <div id="UserRule_collapse_1" class="panel-collapse collapse in"
+                                         aria-expanded="true">
+                                        <div class="panel-body">
+                                            <div id="userrule_jstree_group" style="height:350px;overflow:auto"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-md-12" style="text-align:right; margin-top: 10px">
+                        <div class="row">
+                            规则名称:
+                            <input type="text" class="input-sm" id="findUserRule_name" maxlength="20"/>
+                            <a id="findUserRule_search" class="btn btn-default" style="margin-right: 10px">
+                                <i class="fa fa-search fa-lg"></i>
+                                查询
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-md-12" style="margin-top:10px">
+                        <div class="row">
+                            <div class="col-md-5">
+                                <div class="panel panel-default" style="height:100%">
+                                    <div class="panel-heading">
+                                        <h5 class="panel-title">待选规则
+                                        </h5>
+                                    </div>
+                                    <select name="from" id="userRule_multiselect" class="form-control" size="18" multiple="multiple">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2" style="height:100%;vertical-align:middle">
+                                <button type="button" id="userRule_multiselect_rightSelected" class="btn btn-block">选择</button>
+                                <button type="button" id="userRule_multiselect_rightAll" class="btn btn-block">全选</button>
+                                <button type="button" id="userRule_multiselect_leftSelected" class="btn btn-block">移除</button>
+                                <button type="button" id="userRule_multiselect_leftAll" class="btn btn-block">清空</button>
+                            </div>
+                            <div class="col-md-5" style="height:100%">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h5 class="panel-title">已选规则
+                                        </h5>
+                                    </div>
+                                    <select name="to" id="userRule_multiselect_to" class="form-control" size="18" multiple="multiple"></select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" onclick="closeFindUserRule()">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var closeFindUserRule = function () {
+        var $myUserRuleTable = $('#myUserRuleTable'), findUserRuleParam;
+        var findUserRuleId = $('#findUserRuleId').val(), findUserRuleType = $('#findUserRuleType').val(),
+                findUserRuleParentTableId = $('#findUserRuleParentTableId').val();
+        var findUserRuleRow = $("#userRule_multiselect_to option");
+        if (!findUserRuleRow || findUserRuleRow.length == 0) {
+            ModalBox.alert('请选择一条数据');
+            return;
+        }
+        var findUserRuleList = new Array();
+        var findUserRuleCodes = new Array();
+        for (var i = 0; i < findUserRuleRow.length; i++) {
+            findUserRuleList.push(findUserRuleRow[i].value);
+            findUserRuleCodes.push($(findUserRuleRow[i]).attr("ruleCode"));
+        }
+
+        var url = base + '/admin';
+        if (findUserRuleType == 'plan') {
+            url = url + '/studycenter/' + findUserRuleType + '/saveUserRule';
+            if (oldUser != null && oldUser != '') {
+                findUserRuleParam = {
+                    relationIds: findUserRuleList,
+                    id: findUserRuleId,
+                    olds: oldUser,
+                    codes :findUserRuleCodes
+                };
+            } else {
+                findUserRuleParam = {
+                    relationIds: findUserRuleList,
+                    id: findUserRuleId,
+                    codes :findUserRuleCodes
+                };
+            }
+        } else if (findUserRuleType == "courseShare") {
+            url = url + '/coursecenter/coursemanager/course-user/save';
+            var parentRow = $('#list-course-list').DataTable().selectedRows();
+            var courseIds = new Array();
+            for(var i=0; i<parentRow.length; i++){
+                if (parentRow[i].terminal != 1 && parentRow[i].shareStatus == '未分享') {
+                    courseIds.push(parentRow[i].id);
+                }
+            }
+            findUserRuleParam = {
+                userRuleIds: findUserRuleList,
+                ids: courseIds,
+                codes :findUserRuleCodes
+            };
+        } else if (findUserRuleType == "share") {
+            url = url + '/coursecenter/coursemanager/course-user/save';
+            var courseIds = new Array();
+            courseIds.push(findUserRuleId);
+            findUserRuleParam = {
+                userRuleIds: findUserRuleList,
+                ids: courseIds,
+                codes :findUserRuleCodes
+            };
+        }else if (findUserRuleType == "train") {
+            url = url + '/signUp/train/addUserRule';
+            findUserRuleParam = {
+                ruleIds: findUserRuleList,
+                trainId: findUserRuleId,
+                codes :findUserRuleCodes
+            };
+        }else if (findUserRuleType == "honor") {
+            url = url + '/pcbackground/honorroll/addUserRule';
+            findUserRuleParam = {
+                ruleIds: findUserRuleList,
+                honorId: findUserRuleId,
+                codes :findUserRuleCodes
+            };
+        } else if (findUserRuleType == "message") {
+            for (var i = 0; i < findUserRuleRow.length; i++) {
+                var li = $('#addressee-rule-' + findUserRuleRow[i].value);
+                if (li == undefined || li == '' || li.length < 1) {
+                    document.getElementById('addresseeUl').innerHTML += '<li class="search-choice" ' +
+                            'id="addressee-rule-' + findUserRuleRow[i].value + '" addressee="' + $(findUserRuleRow[i]).attr("ruleCode") + '" ' +
+                            'aname="' + findUserRuleRow[i].text + '" atype="USERRULE">' +
+                            '<span>' + findUserRuleRow[i].text + '</span>' +
+                            '<a class="search-choice-close" onclick="$(this).parent().remove();"></a>' +
+                            '</li>';
+                }
+            }
+            $('#findUserRule').modal('hide');
+            return;
+        } else if (findUserRuleType == "createdSurvey") {
+            var ids = $("#createdSurvey_userRuleIds").val();;
+            for (var i = 0; i < findUserRuleRow.length; i++) {
+                if(ids && ids.length>0) {
+                    ids += ',' + findUserRuleRow[i].value;
+                } else {
+                    if (i == 0) {
+                        ids = findUserRuleRow[i].value;
+                    } else {
+                        ids += ',' + findUserRuleRow[i].value;
+                    }
+                }
+            }
+            $("#createdSurvey_userRuleIds").val(ids);
+
+            $('#findUserRule').modal('hide');
+            if (findUserRuleParentTableId) {
+                /*$('#div-' + findUserRuleParentTableId).show()*/
+
+                var table_url = $("#table-list-user-rule-add-item").attr("data-ajax-url");
+                if(table_url == undefined) {
+                    table_url = $("#table-list-user-rule-edit-item").attr("data-ajax-url");
+                }
+                var o = table_url.split('?');
+                if(o.length > 1) {
+                    table_url = o[0] + "?ids=" + ids
+                }
+                $('#' + findUserRuleParentTableId).DataTable().ajax.url(table_url).load();
+            }
+            return;
+        }else if(findUserRuleType == "exam"){
+            url = url + "/exam/examInfo/saveUserGroup";
+            var ids = new Array();
+            for (var i = 0; i < findUserRuleRow.length; i++) {
+                ids.push(findUserRuleRow[i].value);
+            }
+            findUserRuleParam = {
+                id: findUserRuleId,
+                ids: ids,
+                codes :findUserRuleCodes
+            };
+            var table_url_1 = base +  '/admin/exam/examInfo/findUserRule?id=' + findUserRuleId;
+            $.ajax({
+                type: 'post',
+                url: url,
+                data: JSON.stringify(findUserRuleParam),
+                dataType: 'json',
+                contentType: 'application/json;charset=utf-8',
+                success: function (response) {
+                    $('#findUserRule').modal('hide');
+                    if (findUserRuleParentTableId) {
+                        $('#' + findUserRuleParentTableId).DataTable().ajax.url(table_url_1).load();
+                    }
+                }
+            });
+            return;
+
+        }if (findUserRuleType == 'category') {
+            url = url + '/infocenter/' + findUserRuleType + '/saveUserRule';
+            findUserRuleParam = {
+                relationIds: findUserRuleList,
+                id: findUserRuleId,
+                codes :findUserRuleCodes
+            };
+        }
+
+
+        $.ajax({
+            type: 'post',
+            url: url,
+            data: JSON.stringify(findUserRuleParam),
+            dataType: 'json',
+            contentType: 'application/json;charset=utf-8',
+            success: function (response) {
+                $('#findUserRule').modal('hide');
+                if (findUserRuleParentTableId) {
+                    $('#div-' + findUserRuleParentTableId).show();
+                    $('#' + findUserRuleParentTableId).DataTable().ajax.reload();
+                }
+            }
+        });
+    };
+    $(function () {
+        var UserRuleTreeType = [];
+
+        var findUserRuleType = $('#findUserRuleType').val();
+        var $myUserRuleTable = $('#myUserRuleTable');
+
+        $('#findUserRule_search').click(function(){
+            var $selectRuleIds = $("#userRule_multiselect_to option");
+            var selectedRuleIdList = new Array();
+            var findUserRuleCodes = new Array();
+            if($selectRuleIds && $selectRuleIds.length > 0){
+                for(var i=0; i<$selectRuleIds.length; i++){
+                    selectedRuleIdList.push($selectRuleIds[i].value);
+                    findUserRuleCodes.push($($selectRuleIds[i]).attr("ruleCode"));
+                }
+            }
+            var url = base + '/admin/usercenter/rule/userrule/search';
+            var param = {
+                relationType: findUserRuleType,
+                relationId: $('#findUserRuleId').val(),
+                selectedList: selectedRuleIdList,
+                queryThing: $('#findUserRule_name').val(),
+                codes :findUserRuleCodes
+            };
+            $.ajax({
+                type: 'post',
+                url: url,
+                data: JSON.stringify(param),
+                dataType: 'json',
+                contentType: 'application/json;charset=utf-8',
+                success: function (response) {
+                    $("#userRule_multiselect").empty();
+                    var selObj = $("#userRule_multiselect");
+                    var str = "";
+                    for (var i = 0; i <= response.content.length - 1; i++) {
+                        str += "<option value='" + response.content[i].id + "' ruleCode='"+ response.content[i].code + "'>" + response.content[i].name + "</option>"
+                    }
+                    selObj.append(str);
+                }
+            });
+        });
+        $("#findUserRule_name").keydown(function(e){
+            var ev = e || window.event;
+            if(ev.keyCode == 13 || ev.which==13){
+                $("#findUserRule_search").trigger("click");
+                $("input").blur();
+            }
+        });
+        $('#findUserRule').on('show.bs.modal', function () {
+            $("#userRule_multiselect").empty();
+            $("#userRule_multiselect_to").empty();
+            $('#findUserRule_name').val('');
+
+            var url = base + '/admin/usercenter/rule/userrule/search';
+            var $selectRules = $("#userRule_multiselect_to option");
+            var selectedRuleIdList = new Array();
+            if($selectRules && $selectRules.length > 0){
+                for(var i=0; i<$selectRules.length; i++){
+                    selectedRuleIdList.push($selectRules[i].value);
+
+                }
+            }
+            var param = {
+                relationType: findUserRuleType,
+                relationId: $('#findUserRuleId').val(),
+                selectedList: selectedRuleIdList,
+                queryThing: $('#findUserRule_name').val()
+            };
+            $.ajax({
+                type: 'post',
+                url: url,
+                data: JSON.stringify(param),
+                dataType: 'json',
+                contentType: 'application/json;charset=utf-8',
+                success: function (response) {
+                    $("#userRule_multiselect").empty();
+                    var selObj = $("#userRule_multiselect");
+                    var str = "";
+                    for (var i = 0; i <= response.content.length - 1; i++) {
+                        str += "<option value='" + response.content[i].id + "' ruleCode='"+ response.content[i].code + "'>" + response.content[i].name + "</option>"
+                    }
+                    selObj.append(str);
+                }
+            });
+//            $myUserRuleTable.DataTable().ajax.url(base + '/admin/usercenter/rule/userrule/search?typeParentId=1'
+//                    + '&assignType=' + findUserRuleType + '&assignId=' + $('#findUserRuleId').val()).load();
+            /*$myUserRuleTable.DataTable().ajax.url(base + '/admin/usercenter/rule/nosearch').load();
+            $.getJSON(base + '/admin/usercenter/rule/searchUserRuleType', function (data) {
+                var orgList = data.returnObject;
+                for (var i = 0; i < orgList.length; i++) {
+
+                    UserRuleTreeType.push({
+                        id: orgList[i].id,
+                        text: orgList[i].name,
+                        data: orgList[i],
+                        parent: (orgList[i].parentId ? orgList[i].parentId : '#')
+                    });
+                }
+                $('#userrule_jstree_group').jstree({
+                    'core': {
+                        'data': UserRuleTreeType
+                    }
+                });
+                $('#userrule_jstree_group').on('loaded.jstree', function (e, data) {
+                    $('#userrule_jstree_group').jstree('open_all');
+                });
+                $('#userrule_jstree_group').on('changed.jstree', function (e, data) {
+                    $myUserRuleTable.DataTable().ajax.url(base + '/admin/usercenter/rule/userrule/search?typeParentId='
+                            + data.node.data.id + '&assignType=' + findUserRuleType + '&assignId=' + $('#findUserRuleId').val()).load();
+                });
+            });*/
+            $('#userRule_multiselect').multiselect();
+        });
+
+    });
+</script>
+</#macro>
+
+<#macro findUserRuleForCategory findUserRuleId findUserRuleType findUserRuleParentTableId>
+<div class="modal fade bs-example-modal-lg" role="dialog" aria-labelledby="findUserRuleModalLabel"
+     id="findUserRuleForCategory">
+    <input type="hidden" id="findUserRuleId" value="${findUserRuleId}"/>
+    <input type="hidden" id="findUserRuleType" value="${findUserRuleType}"/>
+    <input type="hidden" id="findUserRuleParentTableId" value="${findUserRuleParentTableId}"/>
+
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h4 class="modal-title" id="findUserRuleModalLabel">选择用户规则</h4>
+            </div>
+            <div class="col-xs-12 col-md-12">
+                <div class="col-xs-12 col-md-12" style="text-align:left;margin: 5">
+                    <div class="col-xs-4 col-md-4">
+                        <div class="portlet-body">
+                            <div class="panel-group accordion" id="user_rule_accordion">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <a class="accordion-toggle" data-toggle="collapse"
+                                               data-parent="#user_rule_accordion" href="#UserRule_collapse_1"
+                                               aria-expanded="false"> 用户规则类型 </a>
+                                        </h4>
+                                    </div>
+                                    <div id="UserRule_collapse_1" class="panel-collapse collapse in"
+                                         aria-expanded="true">
+                                        <div class="panel-body">
+                                            <div id="userrule_jstree_group" style="height:350px;overflow:auto"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-8 col-md-8">
+                        <table id="myUserRuleTable" class="table table-striped table-hover table-bordered" width="100%"
+                               data-serverSide="true"
+                               data-paging="true"
+                               data-ordering="false" data-language-emptyTable="没有数据"
+                               data-ajax-type="get"
+                               data-row-id="id"
+                               data-select-style="multiple"
+                               data-select-info="false"
+                               role="grid"
+                               rel="datatables"
+                               data-ajax-url="${base}/admin/usercenter/user/nosearch"
+                        >
+                            <thead>
+                            <tr>
+                                <th data-name="name">名称</th>
+                            </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" onclick="closeFindUserRuleForCategory()">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var closeFindUserRuleForCategory = function () {
+        var $myUserRuleTable = $('#myUserRuleTable'), findUserRuleParam;
+        var findUserRuleId = $('#findUserRuleId').val(), findUserRuleType = $('#findUserRuleType').val(),
+                findUserRuleParentTableId = $('#findUserRuleParentTableId').val();
+        var findUserRuleRow = $myUserRuleTable.DataTable().selectedRows();
+        if (!findUserRuleRow || findUserRuleRow.length == 0) {
+            ModalBox.alert('请选择一条数据');
+            return;
+        }
+        var findUserRuleList = new Array();
+        for (var i = 0; i < findUserRuleRow.length; i++) {
+            findUserRuleList.push(findUserRuleRow[i].id);
+        }
+
+        var url = base + '/admin';
+        if (findUserRuleType == 'category') {
+            url = url + '/infocenter/' + findUserRuleType + '/saveUserRule';
+            findUserRuleParam = {
+                relationIds: findUserRuleList,
+                id: findUserRuleId
+            };
+        }
+        $.ajax({
+            type: 'post',
+            url: url,
+            data: JSON.stringify(findUserRuleParam),
+            dataType: 'json',
+            contentType: 'application/json;charset=utf-8',
+            success: function (response) {
+                $('#findUserRuleForCategory').modal('hide');
+                if (findUserRuleParentTableId) {
+                    $('#div-' + findUserRuleParentTableId).show();
+                    $('#' + findUserRuleParentTableId).DataTable().ajax.reload();
+                }
+            }
+        });
+    };
+    $(function () {
+        var UserRuleTreeType = [];
+        var findUserRuleType = $('#findUserRuleType').val();
+        var $myUserRuleTable = $('#myUserRuleTable');
+        $('#findUserRuleForCategory').on('show.bs.modal', function () {
+            $myUserRuleTable.DataTable().ajax.url(base + '/admin/usercenter/rule/nosearch').load();
+            $.getJSON(base + '/admin/usercenter/rule/searchUserRuleType', function (data) {
+                var orgList = data.returnObject;
+                for (var i = 0; i < orgList.length; i++) {
+
+                    UserRuleTreeType.push({
+                        id: orgList[i].id,
+                        text: orgList[i].name,
+                        data: orgList[i],
+                        parent: (orgList[i].parentId ? orgList[i].parentId : '#')
+                    });
+                }
+                $('#userrule_jstree_group').jstree({
+                    'core': {
+                        'data': UserRuleTreeType
+                    }
+                });
+                $('#userrule_jstree_group').on('loaded.jstree', function (e, data) {
+                    $('#userrule_jstree_group').jstree('open_all');
+                });
+                $('#userrule_jstree_group').on('changed.jstree', function (e, data) {
+                    $myUserRuleTable.DataTable().ajax.url(base + '/admin/usercenter/rule/userrule/search?typeParentId='
+                            + data.node.data.id + '&assignType=' + findUserRuleType + '&assignId=' + $('#findUserRuleId').val()).load();
+                });
+            });
+
+        });
+    });
+</script>
+</#macro>
+
+<#-- 课程资源选择弹出框 findCourseId：弹出框关联模块id  findCourseType：弹出框关联模块类型 findCourseParentTableId：保存之后刷新表格数据id-->
+<#macro findCourse findCourseId findCourseType findCourseParentTableId>
+<div class="modal fade bs-example-modal-lg" role="dialog" aria-labelledby="findCourseModalLabel" id="findCourse">
+    <input type="hidden" id="findCourseId" value="${findCourseId}"/>
+    <input type="hidden" id="findCourseType" value="${findCourseType}"/>
+    <input type="hidden" id="findCourseParentTableId" value="${findCourseParentTableId}"/>
+    <input type="hidden" id="courseTerminal">
+
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h4 class="modal-title" id="findCourseModalLabel">选择课程资源</h4>
+            </div>
+            <div class="col-xs-12 col-md-12">
+                <div class="col-xs-12 col-md-12" style="text-align:right; margin-top: 10px">
+                    <div class="row">
+                        课程名称:
+                        <input type="text" class="input-sm" id="findCourse_name" maxlength="20"/>
+                        <a id="findCourse_search" class="btn btn-default" style="margin-right: 10px">
+                            <i class="fa fa-search fa-lg"></i>
+                            查询
+                        </a>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-md-12" style="text-align:left;margin-top: 10px">
+                    <div class="col-xs-4 col-md-4">
+                        <div class="portlet-body">
+                            <div class="panel-group accordion" id="course_accordion">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <a class="accordion-toggle" data-toggle="collapse"
+                                               data-parent="#course_accordion" href="#course_collapse_1"
+                                               aria-expanded="false"> 课程资源 </a>
+                                        </h4>
+                                    </div>
+                                    <div id="course_collapse_1" class="panel-collapse collapse in"
+                                         aria-expanded="true">
+                                        <div class="panel-body">
+                                            <div id="coursetype_jstree_group" style="height:350px;overflow:auto"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-8 col-md-8">
+                        <div class="row">
+                            <div class="col-md-5">
+                                <div class="panel panel-default" style="height:100%">
+                                    <div class="panel-heading">
+                                        <h5 class="panel-title">待选课程
+                                        </h5>
+                                    </div>
+                                    <select name="from" id="course_multiselect" class="form-control" size="18" multiple="multiple">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2" style="height:100%;vertical-align:middle">
+                                <button type="button" id="course_multiselect_rightSelected" class="btn btn-block">选择</button>
+                                <button type="button" id="course_multiselect_rightAll" class="btn btn-block">全选</button>
+                                <button type="button" id="course_multiselect_leftSelected" class="btn btn-block">移除</button>
+                                <button type="button" id="course_multiselect_leftAll" class="btn btn-block">清空</button>
+                            </div>
+                            <div class="col-md-5" style="height:100%">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h5 class="panel-title">已选课程
+                                        </h5>
+                                    </div>
+                                    <select name="to" id="course_multiselect_to" class="form-control" size="18" multiple="multiple"></select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" onclick="closeFindCourse()">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var closeFindCourse = function () {
+        var $myCourseTable = $('#myCourseTable'), findCourseParam, oldCourseIds = $('#oldCourseIds').val();
+        var findCourseId = $('#findCourseId').val(), findCourseType = $('#findCourseType').val(),
+                findCourseParentTableId = $('#findCourseParentTableId').val();
+        var findCourseRow = $("#course_multiselect_to option");
+        if (!findCourseRow || findCourseRow.length == 0) {
+            ModalBox.alert('请选择一条数据');
+            return;
+        }
+        var findCourseList = new Array();
+        for (var i = 0; i < findCourseRow.length; i++) {
+            findCourseList.push(findCourseRow[i].value);
+        }
+        if (oldCourseIds != null && oldCourseIds != '') {
+            findCourseParam = {
+                relationIds: findCourseList,
+                id: findCourseId,
+                olds: oldCourseIds
+            };
+        } else {
+            findCourseParam = {
+                relationIds: findCourseList,
+                id: findCourseId
+            };
+        }
+        var url = base + '/admin';
+        if (findCourseType == 'plan') {
+            url = url + '/studycenter/' + findCourseType + '/saveCourse';
+        }else if(findCourseType == 'app_info'){
+            $('#findCourse').modal('hide');
+        }
+        $.ajax({
+            type: 'post',
+            url: url,
+            data: JSON.stringify(findCourseParam),
+            dataType: 'json',
+            contentType: 'application/json;charset=utf-8',
+            success: function (response) {
+                $('#findCourse').modal('hide');
+                if (findCourseParentTableId) {
+                    $('#div-' + findCourseParentTableId).show();
+                    $('#' + findCourseParentTableId).DataTable().ajax.reload();
+                }
+            }
+        });
+    };
+    $(function () {
+        var CourseTreeType = [];
+
+        var findCourseType = $('#findCourseType').val();
+        var $myCourseTable = $('#myCourseTable');
+
+        $('#findCourse_search').click(function(){
+            var $jstree=$('#coursetype_jstree_group');
+            var selectId = $jstree.jstree().get_selected();
+            var $selectCourse = $("#course_multiselect_to option");
+            var selectedCourseIdList = new Array();
+            if($selectCourse && $selectCourse.length > 0){
+                for(var i=0; i<$selectCourse.length; i++){
+                    selectedCourseIdList.push($selectCourse[i].value);
+                }
+            }
+            var url = base + '/admin/coursecenter/course_category/course/search';
+            if(selectId && selectId.length > 0) {
+                var param = {
+                    selectId: selectId[0],
+                    relationType : findCourseType,
+                    relationId : $('#findCourseId').val(),
+                    selectedList : selectedCourseIdList,
+                    courseTerminal: $('#courseTerminal').val(),
+                    queryThing: $('#findCourse_name').val()
+                };
+                $.ajax({
+                    type: 'post',
+                    url: url,
+                    data: JSON.stringify(param),
+                    dataType: 'json',
+                    contentType: 'application/json;charset=utf-8',
+                    success: function (response) {
+                        $("#course_multiselect").empty();
+                        var selObj = $("#course_multiselect");
+                        var str = "";
+                        for (var i = 0; i <= response.content.length - 1; i++) {
+                            str += "<option value='" + response.content[i].id + "'>" + response.content[i].name + "</option>"
+                        }
+                        selObj.append(str);
+                    }
+                });
+            }
+        });
+
+        $('#findCourse').on('show.bs.modal', function () {
+            $("#course_multiselect").empty();
+            $("#course_multiselect_to").empty();
+            $('#findCourse_name').val('');
+
+            $.getJSON(base + '/admin/coursecenter/course_category/searchCourseCategory', function (data) {
+                var orgList = data.returnObject;
+                for (var i = 0; i < orgList.length; i++) {
+
+                    CourseTreeType.push({
+                        id: orgList[i].id,
+                        text: orgList[i].name,
+                        data: orgList[i],
+                        parent: (orgList[i].parentId ? orgList[i].parentId : '#')
+                    });
+                }
+                $('#coursetype_jstree_group').jstree({
+                    'core': {
+                        'data': CourseTreeType
+                    }
+                });
+                $('#coursetype_jstree_group').on('loaded.jstree', function (e, data) {
+                    $('#coursetype_jstree_group').jstree('open_all');
+                });
+                $('#coursetype_jstree_group').on('changed.jstree', function (e, data) {
+                    var url = base + '/admin/coursecenter/course_category/course/search';
+                    var $selectCourses = $("#course_multiselect_to option");
+                    var selectedCourseIdList = new Array();
+                    if($selectCourses && $selectCourses.length > 0){
+                        for(var i=0; i<$selectCourses.length; i++){
+                            selectedCourseIdList.push($selectCourses[i].value);
+                        }
+                    }
+                    var param = {
+                        selectId : data.node.data.id,
+                        relationType : findCourseType,
+                        relationId : $('#findCourseId').val(),
+                        selectedList : selectedCourseIdList,
+                        courseTerminal: $('#courseTerminal').val(),
+                        queryThing: $('#findCourse_name').val()
+                    };
+                    $.ajax({
+                        type: 'post',
+                        url: url,
+                        data: JSON.stringify(param),
+                        dataType: 'json',
+                        contentType: 'application/json;charset=utf-8',
+                        success: function (response) {
+                            $("#course_multiselect").empty();
+                            var selObj = $("#course_multiselect");
+                            var str = "";
+                            for (var i = 0; i <= response.content.length-1; i++) {
+                                str += "<option value='" + response.content[i].id + "'>" + response.content[i].name + "</option>"
+                            }
+                            selObj.append(str);
+                        }
+                    });
+                });
+            });
+
+            $('#course_multiselect').multiselect();
+        });
+    });
+</script>
+</#macro>
+
+
+<#-- 新建用户规则选择弹出框 relationId：弹出框关联模块id  relationType：弹出框关联模块类型 relationParentTableId：保存之后刷新表格数据id- -->
+<#macro createUserRule relationId relationType relationParentTableId>
+<div class="modal fade bs-example-modal-lg" role="dialog" aria-labelledby="gridSystemModalLabel"
+     id="createUserRule">
+    <input type="hidden" id="relationId" value="${relationId}"/>
+    <input type="hidden" id="relationType" value="${relationType}"/>
+    <input type="hidden" id="relationParentTableId" value="${relationParentTableId}"/>
+
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h4 class="modal-title" id="gridSystemModalLabel">新建用户规则</h4>
+            </div>
+            <div class="col-xs-12 col-md-12">
+                <form id="create-user-rule-form"
+                      action="${base}/admin/studycenter/${relationType}/createUserRule" method="post"
+                      class="form-horizontal" rel="validate-form" data-bv-container="tooltip">
+                    <input type="hidden" name="rule.id"/>
+                    <input type="hidden" name="rule.planId" id="rulePlanId" value="${relationId}"/>
+                    <input type="hidden" name="rule.group" value="0"/>
+                    <input type="hidden" name="rule.status" value="ENABLED"/>
+                    <input type="hidden" name="rule.parentId" value="1"/>
+                    <input type="hidden" name="rule.expSql" id="expSql"/>
+                    <button type="reset" id="resetRule" style="display: none;"></button>
+
+                    <div class="form-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="col-md-12" style="margin-top: 15px">
+                                    <div class="form-group">
+                                        <label class="control-label col-md-3"><span style="color:red;">*</span>规则名称：</label>
+
+                                        <div class="col-md-9">
+                                            <input type="text" name="rule.name"
+                                                   class="form-control input-sm"
+                                                   validate="{required:true,maxlength:50,charCheck:true}"
+                                                  />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="control-label col-md-3"><span style="color:red;">*</span>规则编码：</label>
+
+                                        <div class="col-md-9">
+                                            <input type="text" name="rule.code"
+                                                   class="form-control input-sm"
+                                                   validate="{required:true,maxlength:50,charEnCheck:true,checkRepeat:true}"
+                                                    />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" hidden="true">
+                                    <div class="form-group">
+                                        <label class="control-label col-md-3">规则表达式：</label>
+
+                                        <div class="col-md-9">
+                                            <textarea rows="3" id="expText" name="rule.expText"
+                                                      class="form-control input-sm"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="control-label col-md-3">用户类型：</label>
+
+                                            <div class="col-md-9">
+                                                <input type="checkbox" name="userTypeEln" id="userTypeEln1" value="1">&nbsp;&nbsp;行政人员&nbsp;&nbsp;&nbsp;&nbsp;
+                                                <input type="checkbox" name="userTypeEln" id="userTypeEln2" value="2">&nbsp;&nbsp;售后系统金牌师傅&nbsp;&nbsp;&nbsp;&nbsp;
+                                                <input type="checkbox" name="userTypeEln" id="userTypeEln3" value="3">&nbsp;&nbsp;业务员&nbsp;&nbsp;&nbsp;&nbsp;
+                                                <input type="checkbox" name="userTypeEln" id="userTypeEln4" value="4">&nbsp;&nbsp;优消
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="control-label col-md-3">关联角色：</label>
+
+                                            <div class="col-md-9">
+                                                <div id="jstree_rule_roles" style="overflow:auto"></div>
+                                                <input type="hidden" id="rule_roleIds" name="rule_roleIds"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="control-label col-md-3">关联群组：</label>
+
+                                            <div class="col-md-9">
+                                                <div id="jstree_rule_groups" style="overflow:auto"></div>
+                                                <input type="hidden" id="rule_groups" name="rule_groups"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12" id="org_div1" hidden="true">
+                                        <div class="form-group">
+                                            <label class="control-label col-md-3">关联行政人员部门：</label>
+
+                                            <div class="col-md-9">
+                                                <div id="jstree_rule_orgs" style="overflow:auto"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12" id="org_div2" hidden="true">
+                                        <div class="form-group">
+                                            <label class="control-label col-md-3">关联业务人员部门：</label>
+
+                                            <div class="col-md-9">
+                                                <div id="jstree_rule_branchs" style="overflow:auto"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12" id="post_rule_div" hidden="true">
+                                        <div class="form-group">
+                                            <label class="control-label col-md-3">关联岗位：</label>
+
+                                            <div class="col-md-9">
+                                                <div id="jstree_rule_posts" style="overflow:auto"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12" id="title_rule_div" hidden="true">
+                                        <div class="form-group">
+                                            <label class="control-label col-md-3">关联职位：</label>
+
+                                            <div class="col-md-9">
+                                                <div id="jstree_rule_office_titles" style="overflow:auto"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12" id="rank_div" hidden="true">
+                                        <div class="form-group">
+                                            <label class="control-label col-md-3">关联职级：</label>
+
+                                            <div class="col-md-9">
+                                                <div id="jstree_rule_ranks" style="overflow:auto"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12" id="store_div" hidden="true">
+                                        <div class="form-group">
+                                            <label class="control-label col-md-3">关联店铺：</label>
+
+                                            <div class="col-md-9">
+                                                <div id="jstree_rule_stores" style="overflow:auto"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" onclick="closeCreateUserRule()">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var closeCreateUserRule = function () {
+        var type = $('#relationType').val();
+        if(type == 'plan'){
+            $('#create-user-rule-form').attr('action',base +'/admin/studycenter/plan/createUserRule');
+        }
+
+        if(type == 'train'){
+            $("#rulePlanId").val($("#relationId").val());
+            $('#create-user-rule-form').attr('action',base +'/admin/signUp/train/createUserRule');
+        }
+
+        if(type == 'honor'){
+            $("#rulePlanId").val($("#relationId").val());
+            $('#create-user-rule-form').attr('action',base +'/admin/pcbackground/honorroll/createUserRule');
+        }
+
+        if(type == "exam"){
+            $("#rulePlanId").val($("#relationId").val());
+            $('#create-user-rule-form').attr('action',base +'/admin/exam/examInfo/createUserRule');
+        }
+
+        if(type == "category"){
+            $("#rulePlanId").val($("#relationId").val());
+            $('#create-user-rule-form').attr('action',base +'/admin/infocenter/category/createUserRule');
+        }
+
+        if(type == "survey") {
+            $("#rulePlanId").val($("#relationId").val());
+            $('#create-user-rule-form').attr('action',base +'/admin/survey/type/createUserRule');
+        }
+
+        if(type == "share") {
+            $("#rulePlanId").val($("#relationId").val());
+            $('#create-user-rule-form').attr('action',base +'/admin/coursecenter/coursemanager/createUserRule');
+        }
+
+        var relationId = $('#relationId').val(), relationType = $('#relationType').val(),
+                relationParentTableId = $('#relationParentTableId').val();
+        var that = $(this), expTextRoles = '', expTextOrgs = '', extpTextDealerOrgs='',expTextGroups = '',
+                expTextPosts = '',expTextRank='',expTextUserTypeElnAdmin='',expTextUserTypeElnClerk='',expTextStore='',expTextOfficeTitle='';
+        var selectRoles = $('#jstree_rule_roles').jstree().get_checked(true);
+        var selectGroups = $('#jstree_rule_groups').jstree().get_checked(true);
+        var selectOrgs = $('#jstree_rule_orgs').jstree().get_checked(true);
+        var selectPosts = $('#jstree_rule_posts').jstree().get_checked(true);
+        var selectOfficeTitles = $('#jstree_rule_office_titles').jstree().get_checked(true);
+        var selectRanks = $('#jstree_rule_ranks').jstree().get_checked(true);
+        var selectBranch = $('#jstree_rule_branchs').jstree().get_checked(true);
+        var selectStore = $('#jstree_rule_stores').jstree().get_checked(true);
+        var selectUserTypeEln = $('input[name=userTypeEln]:checked');
+        var selectAdministrative = false, selectClerk = false;
+
+        if (selectRoles && selectRoles.length > 0) {
+            for (var i = 0; i < selectRoles.length; i++) {
+                if (i == 0 && i == selectRoles.length - 1) {
+                    expTextRoles = '(' + expTextRoles + 'roleCodes.contains(\"' + selectRoles[i].data.code + '\")' + ')';
+                } else if (i == 0 && i != selectRoles.length - 1) {
+                    expTextRoles = '(' + expTextRoles + 'roleCodes.contains(\"' + selectRoles[i].data.code + '\")';
+                } else if (i == selectRoles.length - 1) {
+                    expTextRoles = expTextRoles + '||roleCodes.contains(\"' + selectRoles[i].data.code + '\")' + ')';
+                } else {
+                    expTextRoles = expTextRoles + '||roleCodes.contains(\"' + selectRoles[i].data.code + '\")';
+                }
+            }
+        }
+
+        if (selectGroups && selectGroups.length > 0) {
+            for (var i = 0; i < selectGroups.length; i++) {
+                if (i == 0 && i == selectGroups.length - 1) {
+                    expTextGroups = '(' + expTextGroups + 'userGroupIds.contains(\"' + selectGroups[i].data.id + '\")' + ')';
+                } else if (i == 0 && i != selectGroups.length - 1) {
+                    expTextGroups = '(' + expTextGroups + 'userGroupIds.contains(\"' + selectGroups[i].data.id + '\")';
+                } else if (i == selectGroups.length - 1) {
+                    expTextGroups = expTextGroups + '||userGroupIds.contains(\"' + selectGroups[i].data.id + '\")' + ')';
+                } else {
+                    expTextGroups = expTextGroups + '||userGroupIds.contains(\"' + selectGroups[i].data.id + '\")';
+                }
+            }
+        }
+
+        if(selectUserTypeEln && selectUserTypeEln.length > 0){
+            var value1='',value2='',value3='',value4='';
+            for(var i=0; i<selectUserTypeEln.length;i++){
+                var val = $(selectUserTypeEln[i]).val();
+                if(val == 1 || val == 2){
+                    selectAdministrative = true;
+                    if(val == 1){
+                        value1 = 'userType.equals(\"'+ val+'\")';
+                    }else{
+                        value2 = 'userType.equals(\"'+ val+'\")';
+                    }
+                }else if(val == 3 || val == 4){
+                    selectClerk = true;
+                    if(val == 3){
+                        value3 = 'userType.equals(\"'+ val+'\")';
+                    }else {
+                        value4 = 'userType.equals(\"'+ val+'\")';
+                    }
+                }
+            }
+            if(value1.length >0 && value2.length > 0){
+                expTextUserTypeElnAdmin = '(' + value1 + '||' + value2 + ')';
+            }else if(value1.length > 0){
+                expTextUserTypeElnAdmin = '(' + value1 + ')';
+            }else if(value2.length > 0){
+                expTextUserTypeElnAdmin = '(' + value2 + ')';
+            }
+
+            if(value3.length >0 && value4.length > 0){
+                expTextUserTypeElnClerk = '(' + value3 + '||' + value4 + ')';
+            }else if(value3.length > 0){
+                expTextUserTypeElnClerk = '(' + value3 + ')';
+            }else if(value4.length > 0){
+                expTextUserTypeElnClerk = '(' + value4 + ')';
+            }
+        }
+
+        if (selectOfficeTitles && selectAdministrative && selectOfficeTitles.length > 0) {
+            for (var i = 0; i < selectOfficeTitles.length; i++) {
+                if (i == 0 && i == selectOfficeTitles.length - 1) {
+                    expTextOfficeTitle = '(' + expTextOfficeTitle + 'officeTitle.equals(\"' + selectOfficeTitles[i].id + '\")' + ')';
+                } else if (i == 0 && i != selectOfficeTitles.length - 1) {
+                    expTextOfficeTitle = '(' + expTextOfficeTitle + 'officeTitle.equals(\"' + selectOfficeTitles[i].id + '\")';
+                } else if (i == selectOfficeTitles.length - 1) {
+                    expTextOfficeTitle = expTextOfficeTitle + '||officeTitle.equals(\"' + selectOfficeTitles[i].id + '\")' + ')';
+                } else {
+                    expTextOfficeTitle = expTextOfficeTitle + '||officeTitle.equals(\"' + selectOfficeTitles[i].id + '\")';
+                }
+            }
+        }
+
+        if (selectPosts && selectAdministrative && selectPosts.length > 0) {
+            for (var i = 0; i < selectPosts.length; i++) {
+                if (i == 0 && i == selectPosts.length - 1) {
+                    expTextPosts = '(' + expTextPosts + 'post.equals(\"' + selectPosts[i].id + '\")' + ')';
+                } else if (i == 0 && i != selectPosts.length - 1) {
+                    expTextPosts = '(' + expTextPosts + 'post.equals(\"' + selectPosts[i].id + '\")';
+                } else if (i == selectPosts.length - 1) {
+                    expTextPosts = expTextPosts + '||post.equals(\"' + selectPosts[i].id + '\")' + ')';
+                } else {
+                    expTextPosts = expTextPosts + '||post.equals(\"' + selectPosts[i].id + '\")';
+                }
+            }
+        }
+
+        if (selectRanks && selectClerk && selectRanks.length > 0) {
+            for (var i = 0; i < selectRanks.length; i++) {
+                if (i == 0 && i == selectRanks.length - 1) {
+                    expTextRank = '(' + expTextRank + 'level.equals(\"' + selectRanks[i].id + '\")' + ')';
+                } else if (i == 0 && i != selectRanks.length - 1) {
+                    expTextRank = '(' + expTextRank + 'level.equals(\"' + selectRanks[i].id + '\")';
+                } else if (i == selectRanks.length - 1) {
+                    expTextRank = expTextRank + '||level.equals(\"' + selectRanks[i].id + '\")' + ')';
+                } else {
+                    expTextRank = expTextRank + '||level.equals(\"' + selectRanks[i].id + '\")';
+                }
+            }
+        }
+
+        if (selectBranch && selectClerk && selectBranch.length > 0) {
+            for (var i = 0; i < selectBranch.length; i++) {
+                if (i == 0 && i == selectBranch.length - 1) {
+                    extpTextDealerOrgs = '(' + extpTextDealerOrgs + 'dealerOrg.equals(\"' + selectBranch[i].id + '\")' + ')';
+                } else if (i == 0 && i != selectBranch.length - 1) {
+                    extpTextDealerOrgs = '(' + extpTextDealerOrgs + 'dealerOrg.equals(\"' + selectBranch[i].id + '\")';
+                } else if (i == selectBranch.length - 1) {
+                    extpTextDealerOrgs = extpTextDealerOrgs + '||dealerOrg.equals(\"' + selectBranch[i].id + '\")' + ')';
+                } else {
+                    extpTextDealerOrgs = extpTextDealerOrgs + '||dealerOrg.equals(\"' + selectBranch[i].id + '\")';
+                }
+            }
+        }
+
+        if(selectOrgs && selectAdministrative && selectOrgs.length > 0){
+            for (var i = 0; i < selectOrgs.length; i++) {
+                if (i == 0 && i == selectOrgs.length - 1) {
+                    expTextOrgs = '(' + expTextOrgs + 'org.equals(\"' + selectOrgs[i].data.code + '\")' + ')';
+                } else if (i == 0 && i != selectOrgs.length - 1) {
+                    expTextOrgs = '(' + expTextOrgs + 'org.equals(\"' + selectOrgs[i].data.code + '\")';
+                } else if (i == selectOrgs.length - 1) {
+                    expTextOrgs = expTextOrgs + '||org.equals(\"' + selectOrgs[i].data.code + '\")' + ')';
+                } else {
+                    expTextOrgs = expTextOrgs + '||org.equals(\"' + selectOrgs[i].data.code + '\")';
+                }
+            }
+        }
+
+        if(selectStore && selectClerk && selectStore.length > 0){
+            for (var i = 0; i < selectStore.length; i++) {
+                if (i == 0 && i == selectStore.length - 1) {
+                    expTextStore = '(' + expTextStore + 'storeType.equals(\"' + selectStore[i].id + '\")' + ')';
+                } else if (i == 0 && i != selectStore.length - 1) {
+                    expTextStore = '(' + expTextStore + 'storeType.equals(\"' + selectStore[i].id + '\")';
+                } else if (i == selectStore.length - 1) {
+                    expTextStore = expTextStore + '||storeType.equals(\"' + selectStore[i].id + '\")' + ')';
+                } else {
+                    expTextStore = expTextStore + '||storeType.equals(\"' + selectStore[i].id + '\")';
+                }
+            }
+        }
+
+
+        var expText = '';
+
+        var adminExpText = '', clerkExpText = '';
+
+        if (expTextUserTypeElnAdmin && expTextUserTypeElnAdmin.length > 0) {
+            if (adminExpText && adminExpText.length > 0) {
+                adminExpText = adminExpText + '&&' + expTextUserTypeElnAdmin;
+            } else {
+                adminExpText = adminExpText + expTextUserTypeElnAdmin;
+            }
+        }
+
+        if (expTextUserTypeElnClerk && expTextUserTypeElnClerk.length > 0) {
+            if (clerkExpText && clerkExpText.length > 0) {
+                clerkExpText = clerkExpText + '&&' + expTextUserTypeElnClerk;
+            } else {
+                clerkExpText = clerkExpText + expTextUserTypeElnClerk;
+            }
+        }
+
+        if (expTextRoles && expTextRoles.length > 0) {
+            if (expText && expText.length > 0) {
+                expText = expText + '&&' + expTextRoles;
+            } else {
+                expText = expText + expTextRoles;
+            }
+        }
+        if (expTextGroups && expTextGroups.length > 0) {
+            if (expText && expText.length > 0) {
+                expText = expText + '&&' + expTextGroups;
+            } else {
+                expText = expText + expTextGroups;
+            }
+        }
+        if (expTextOrgs && expTextOrgs.length > 0) {
+            if (adminExpText && adminExpText.length > 0) {
+                adminExpText = adminExpText + '&&' + expTextOrgs;
+            } else {
+                adminExpText = adminExpText + expTextOrgs;
+            }
+        }
+        if (expTextPosts && expTextPosts.length > 0) {
+            if (adminExpText && adminExpText.length > 0) {
+                adminExpText = adminExpText + '&&' + expTextPosts;
+            } else {
+                adminExpText = adminExpText + expTextPosts;
+            }
+        }
+
+        if(expTextOfficeTitle && expTextOfficeTitle.length > 0){
+            if (adminExpText && adminExpText.length > 0) {
+                adminExpText = adminExpText + '&&' + expTextOfficeTitle;
+            } else {
+                adminExpText = adminExpText + expTextOfficeTitle;
+            }
+        }
+
+        if(extpTextDealerOrgs && extpTextDealerOrgs.length > 0){
+            if (clerkExpText && clerkExpText.length > 0) {
+                clerkExpText = clerkExpText + '&&' + extpTextDealerOrgs;
+            } else {
+                clerkExpText = clerkExpText + extpTextDealerOrgs;
+            }
+        }
+
+        if(expTextRank && expTextRank.length > 0){
+            if (clerkExpText && clerkExpText.length > 0) {
+                clerkExpText = clerkExpText + '&&' + expTextRank;
+            } else {
+                clerkExpText = clerkExpText + expTextRank;
+            }
+        }
+        if(expTextStore && expTextStore.length > 0){
+            if (clerkExpText && clerkExpText.length > 0) {
+                clerkExpText = clerkExpText + '&&' + expTextStore;
+            } else {
+                clerkExpText = clerkExpText + expTextStore;
+            }
+        }
+
+        if(adminExpText.length > 0 && clerkExpText.length > 0){
+            expText = expText + '&&((' + adminExpText + ')||(' + clerkExpText + '))';
+        }else if(adminExpText.length > 0){
+            expText = expText + '&&(' + adminExpText + ')';
+        }else if(clerkExpText.length > 0){
+            expText = expText + '&&(' + clerkExpText + ')';
+        }
+
+        if (expText == '' || expText.length == 0) {
+            MessageBox.info('请选择关联资源');
+            return;
+        } else {
+            $('#expText').val(expText);
+        }
+
+        if (expText == '' || expText.length == 0) {
+            MessageBox.info('请选择关联资源');
+            return;
+        } else {
+            $('#expText').val(expText);
+        }
+
+        var flag = $('#create-user-rule-form').valid();
+        if (!flag) {
+            return;
+        }
+        $('#create-user-rule-form').ajaxValidSubmit({
+            success: function (data) {
+                MessageBox.success('保存成功');
+                $('#createUserRule').modal('hide');
+                if (relationParentTableId) {
+                    if(type == 'survey') {
+                        var ruturnId = data.returnObject;
+                        var ids = $('#createdSurvey_userRuleIds').val();
+                        if(ids && ids.length) {
+                           ids += ',' +  ruturnId;
+                        }else{
+                            ids = ruturnId;
+                        }
+                        $('#createdSurvey_userRuleIds').val(ids);
+                        var url = $('#' + relationParentTableId).attr('data-ajax-url');
+                        var k = url.split("?")
+                        if(k.length > 1) {
+                            url = k[0] + "?ids=" + ids
+                        }
+                        $('#' + relationParentTableId).DataTable().ajax.url(url).load();
+                        $('#div-' + relationParentTableId).show();
+                    }else {
+                        $('#' + relationParentTableId).DataTable().ajax.reload();
+                        $('#div-' + relationParentTableId).show();
+                    }
+                }
+            },
+            error: function (data) {
+                if ('数据绑定出错' == data.exceptionMessage) {
+                    ModalBox.alert(data.validateErrors[0].element + '数据绑定' + data.validateErrors[0].message);
+                } else {
+                    ModalBox.alert(data.exceptionMessage);
+                }
+            }
+        });
+    };
+    $(function () {
+        formInitFunc("create-user-rule-form");
+        $('input[name="rule.code"]').bind('myCheck',function(){
+            var url = base + '/admin/usercenter/rule/checkRuleCode?value='+$('input[name="rule.code"]').val()+'&id='+$('input[name="rule.id"]').val();
+            $.ajax({
+                type: 'post',
+                url: url,
+                async : false,
+                success: function (response) {
+                    if (!response.success) {
+                        $('input[name="rule.code"]').attr("isRepeat",0);
+                    }else{
+                        $('input[name="rule.code"]').attr("isRepeat",1);
+                    }
+                }
+            });
+        });
+
+        $('#userTypeEln1').click(function () {
+            if ($('#userTypeEln1')[0].checked || $('#userTypeEln2')[0].checked) {
+                $('#org_div1').show();
+                $('#post_rule_div').show();
+                $('#title_rule_div').show();
+            }else{
+                $('#org_div1').hide();
+                $('#post_rule_div').hide();
+                $('#title_rule_div').hide();
+            }
+        });
+        $('#userTypeEln2').click(function () {
+            if ($('#userTypeEln1')[0].checked || $('#userTypeEln2')[0].checked) {
+                $('#org_div1').show();
+                $('#post_rule_div').show();
+                $('#title_rule_div').show();
+            }else{
+                $('#org_div1').hide();
+                $('#post_rule_div').hide();
+                $('#title_rule_div').hide();
+            }
+        });
+
+        $('#userTypeEln3').click(function () {
+            if ($('#userTypeEln3')[0].checked || $('#userTypeEln4')[0].checked) {
+                $('#org_div2').show();
+                $('#rank_div').show();
+                $('#store_div').show();
+            }else{
+                $('#org_div2').hide();
+                $('#rank_div').hide();
+                $('#store_div').hide();
+            }
+        });
+
+        $('#userTypeEln4').click(function () {
+            if ($('#userTypeEln3')[0].checked || $('#userTypeEln4')[0].checked) {
+                $('#org_div2').show();
+                $('#rank_div').show();
+                $('#store_div').show();
+            }else{
+                $('#org_div2').hide();
+                $('#rank_div').hide();
+                $('#store_div').hide();
+            }
+        });
+
+        $('#createUserRule').on('show.bs.modal', function () {
+            $('#resetRule').click();
+
+            $('#org_div1').hide();
+            $('#post_rule_div').hide();
+            $('#org_div2').hide();
+            $('#rank_div').hide();
+            $('#store_div').hide();
+
+            var treeRoles = [], treePosts = [], treeOrgs = [], treeGroups = [],
+                    treeRanks = [], treeBranch=[], treeStore=[], treeTitles=[];
+            $('input[name="rule.code"]').bind('myCheck',function(){
+                var url = base + '/admin/usercenter/rule/checkRuleCode?value='+$('input[name="rule.code"]').val()+'&id='+$('input[name="rule.id"]').val();
+                $.ajax({
+                    type: 'post',
+                    url: url,
+                    async : false,
+                    success: function (response) {
+                        if (!response.success) {
+                            $('input[name="rule.code"]').attr("isRepeat",0);
+                        }else{
+                            $('input[name="rule.code"]').attr("isRepeat",1);
+                        }
+                    }
+                });
+            });
+
+            $.getJSON(base + '/admin/usercenter/rule/findResources', function (response) {
+                var data = response.returnObject;
+                if (data.roles) {
+                    for (var i = 0; i < data.roles.length; i++) {
+                        treeRoles.push({
+                            id: data.roles[i].id,
+                            text: data.roles[i].name,
+                            data: data.roles[i],
+                            //state: {disabled: data.roles[i].group},
+                            parent: (data.roles[i].parentId ? data.roles[i].parentId : '#')
+                        });
+                    }
+                }
+
+                if (data.groups) {
+                    for (var i = 0; i < data.groups.length; i++) {
+                        treeGroups.push({
+                            id: data.groups[i].id,
+                            text: data.groups[i].name,
+                            data: data.groups[i],
+                            //state: {disabled: data.groups[i].group},
+                            parent: (data.groups[i].parentId ? data.groups[i].parentId : '#')
+                        });
+                    }
+                }
+
+                if (data.orgs) {
+                    for (var i = 0; i < data.orgs.length; i++) {
+                        treeOrgs.push({
+                            id: data.orgs[i].id,
+                            text: data.orgs[i].name,
+                            data: data.orgs[i],
+                            parent: (data.orgs[i].parentId ? data.orgs[i].parentId : '#')
+                        });
+                    }
+                }
+
+
+                if(data.regions){
+                    for (var i = 0; i < data.regions.length; i++) {
+                        treeBranch.push({
+                            id: data.regions[i].regionNo,
+                            text: data.regions[i].regionDesc,
+                            data: data.regions[i],
+                            parent: '#'
+                        });
+                    }
+                    if(data.branches){
+                        for (var i = 0; i < data.branches.length; i++) {
+                            treeBranch.push({
+                                id: data.branches[i].branchNo,
+                                text: data.branches[i].branchDesc,
+                                data: data.branches[i],
+                                parent: (data.branches[i].regionNo ? data.branches[i].regionNo : '#')
+                            });
+                        }
+                    }
+                }
+
+                if(data.posts){
+                    treePosts.push({
+                        id: 'all',
+                        text: '全部',
+                        state: {disabled: true},
+                        parent: '#'
+                    });
+                    for (var i = 0; i < data.posts.length; i++) {
+                        treePosts.push({
+                            id: data.posts[i].code,
+                            text: data.posts[i].label,
+                            parent: 'all'
+                        });
+                    }
+                }
+
+                if(data.levels){
+                    treeRanks.push({
+                        id: 'all',
+                        text: '全部',
+                        state: {disabled: true},
+                        parent: '#'
+                    });
+                    for (var i = 0; i < data.levels.length; i++) {
+                        treeRanks.push({
+                            id: data.levels[i].code,
+                            text: data.levels[i].label,
+                            parent: 'all'
+                        });
+                    }
+                }
+
+                if(data.officeTitles){
+                    treeTitles.push({
+                        id: 'all',
+                        text: '全部',
+                        state: {disabled: true},
+                        parent: '#'
+                    });
+                    for (var i = 0; i < data.officeTitles.length; i++) {
+                        treeTitles.push({
+                            id: data.officeTitles[i].code,
+                            text: data.officeTitles[i].label,
+                            parent: 'all'
+                        });
+                    }
+                }
+
+                treeStore.push({
+                    id: 0,
+                    text: '全部',
+                    state: {disabled: true},
+                    parent: '#'
+                });
+                treeStore.push({
+                    id: 1,
+                    text: '专卖店',
+                    parent: 0
+                });
+                treeStore.push({
+                    id: 4,
+                    text: '可订货工作室',
+                    parent: 0
+                });
+                treeStore.push({
+                    id: 5,
+                    text: '不可订货工作室',
+                    parent: 0
+                });
+
+                $('#jstree_rule_roles').jstree({
+                    'core': {
+                        'data': treeRoles
+                    },
+                    'checkbox': {
+                        'keep_selected_style': false
+                        //'three_state': false
+                    },
+                    'plugins': ['wholerow', 'checkbox']
+                }).bind('select_node.jstree',function(event,data){
+                    $('#jstree_rule_roles').jstree("open_node", "#"+data.node.id);
+                    var arr = data.node.children_d;
+                    for(var i= 0,length=arr.length; i<length; i++){
+                        $('#jstree_rule_roles').jstree("open_node", "#"+arr[i]);
+                    }
+                }).bind("deselect_node.jstree",function(e,data){ //点击事件
+                    $('#jstree_rule_roles').jstree("close_node", "#"+data.node.id);
+
+                    var arr = data.node.children_d;
+                    for(var i= 0,length=arr.length; i<length; i++){
+                        $('#jstree_rule_roles').jstree("close_node", "#"+arr[i]);
+                    }
+                });
+                $('#jstree_rule_groups').jstree({
+                    'core': {
+                        'data': treeGroups
+                    },
+                    'checkbox': {
+                        'keep_selected_style': false
+                        //'three_state': false
+                    },
+                    'plugins': ['wholerow', 'checkbox']
+                }).bind('select_node.jstree',function(event,data){
+                    $('#jstree_rule_groups').jstree("open_node", "#"+data.node.id);
+                    var arr = data.node.children_d;
+                    for(var i= 0,length=arr.length; i<length; i++){
+                        $('#jstree_rule_groups').jstree("open_node", "#"+arr[i]);
+                    }
+                }).bind("deselect_node.jstree",function(e,data){ //点击事件
+                    $('#jstree_rule_groups').jstree("close_node", "#"+data.node.id);
+
+                    var arr = data.node.children_d;
+                    for(var i= 0,length=arr.length; i<length; i++){
+                        $('#jstree_rule_groups').jstree("close_node", "#"+arr[i]);
+                    }
+                });
+
+                $('#jstree_rule_posts').jstree({
+                    'core': {
+                        'data': treePosts
+                    },
+                    'checkbox': {
+                        'keep_selected_style': false
+                        //'three_state': false
+                    },
+                    'plugins': ['wholerow', 'checkbox']
+                }).bind('select_node.jstree',function(event,data){
+                    $('#jstree_rule_posts').jstree("open_node", "#"+data.node.id);
+                    var arr = data.node.children_d;
+                    for(var i= 0,length=arr.length; i<length; i++){
+                        $('#jstree_rule_posts').jstree("open_node", "#"+arr[i]);
+                    }
+                }).bind("deselect_node.jstree",function(e,data){ //点击事件
+                    $('#jstree_rule_posts').jstree("close_node", "#"+data.node.id);
+
+                    var arr = data.node.children_d;
+                    for(var i= 0,length=arr.length; i<length; i++){
+                        $('#jstree_rule_posts').jstree("close_node", "#"+arr[i]);
+                    }
+                });
+
+                $('#jstree_rule_orgs').jstree({
+                    'core': {
+                        'data': treeOrgs
+                    },
+                    'checkbox': {
+                        'keep_selected_style': false
+                        //'three_state': false
+                    },
+                    'plugins': ['wholerow', 'checkbox']
+                }).bind('select_node.jstree',function(event,data){
+                    $('#jstree_rule_orgs').jstree("open_node", "#"+data.node.id);
+                    var arr = data.node.children_d;
+                    for(var i= 0,length=arr.length; i<length; i++){
+                        $('#jstree_rule_orgs').jstree("open_node", "#"+arr[i]);
+                    }
+                }).bind("deselect_node.jstree",function(e,data){ //点击事件
+                    $('#jstree_rule_orgs').jstree("close_node", "#"+data.node.id);
+
+                    var arr = data.node.children_d;
+                    for(var i= 0,length=arr.length; i<length; i++){
+                        $('#jstree_rule_orgs').jstree("close_node", "#"+arr[i]);
+                    }
+                });
+
+
+                $('#jstree_rule_branchs').jstree({
+                    'core': {
+                        'data': treeBranch
+                    },
+                    'checkbox': {
+                        'keep_selected_style': false
+                        //'three_state': false
+                    },
+                    'plugins': ['wholerow', 'checkbox']
+                }).bind('select_node.jstree',function(event,data){
+                    $('#jstree_rule_branchs').jstree("open_node", "#"+data.node.id);
+                    var arr = data.node.children_d;
+                    for(var i= 0,length=arr.length; i<length; i++){
+                        $('#jstree_rule_branchs').jstree("open_node", "#"+arr[i]);
+                    }
+                }).bind("deselect_node.jstree",function(e,data){ //点击事件
+                    $('#jstree_rule_branchs').jstree("close_node", "#"+data.node.id);
+
+                    var arr = data.node.children_d;
+                    for(var i= 0,length=arr.length; i<length; i++){
+                        $('#jstree_rule_branchs').jstree("close_node", "#"+arr[i]);
+                    }
+                });
+
+
+                $('#jstree_rule_ranks').jstree({
+                    'core': {
+                        'data': treeRanks
+                    },
+                    'checkbox': {
+                        'keep_selected_style': true,
+                        'three_state': false
+                    },
+                    'plugins': ['wholerow', 'checkbox']
+                });
+
+                $('#jstree_rule_office_titles').jstree({
+                    'core': {
+                        'data': treeTitles
+                    },
+                    'checkbox': {
+                        'keep_selected_style': true,
+                        'three_state': false
+                    },
+                    'plugins': ['wholerow', 'checkbox']
+                });
+
+                $('#jstree_rule_stores').jstree({
+                    'core': {
+                        'data': treeStore
+                    },
+                    'checkbox': {
+                        'keep_selected_style': true,
+                        'three_state': false
+                    },
+                    'plugins': ['wholerow', 'checkbox']
+                });
+            });
+        });
+    });
+</script>
+</#macro>
+
+
+
+

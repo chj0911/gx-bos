@@ -1,0 +1,172 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>macula-plugins-parent</artifactId>
+		<groupId>org.macula.plugins</groupId>
+		<version>3.0.0.M1</version>
+		<relativePath>../macula-plugins-parent/pom.xml</relativePath>
+	</parent>
+	<artifactId>macula-plugins-webapp</artifactId>
+	<packaging>war</packaging>
+	<name>Macula Plugins Webapp</name>
+
+	<dependencies>
+		<!-- Oracle Driver -->
+		<dependency>
+			<groupId>com.oracle</groupId>
+			<artifactId>ojdbc6</artifactId>
+		</dependency>
+
+		<!-- MySQL Driver -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+		</dependency>
+
+		<!-- liquibase -->
+		<dependency>
+			<groupId>org.liquibase</groupId>
+			<artifactId>liquibase-core</artifactId>
+		</dependency>
+
+		<!-- Macula -->
+		<dependency>
+			<groupId>org.macula</groupId>
+			<artifactId>macula-base</artifactId>
+		</dependency>
+				
+		<!-- Plugins -->
+		<dependency>
+			<groupId>org.macula.plugins</groupId>
+			<artifactId>macula-plugins-admin</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.macula.plugins</groupId>
+			<artifactId>macula-plugins-rule</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.macula.plugins</groupId>
+			<artifactId>macula-plugins-dubbo</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.macula.plugins</groupId>
+			<artifactId>macula-plugins-catex</artifactId>
+		</dependency>		
+	</dependencies>
+
+	<build>
+		<finalName>macula-plugins-webapp</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.6</version>
+			</plugin>
+			<plugin>
+				<groupId>net.alchim31.maven</groupId>
+				<artifactId>yuicompressor-maven-plugin</artifactId>
+				<version>1.5.1</version>
+				<configuration>
+					<encoding>utf-8</encoding>
+					<suffix>.min</suffix>
+					<force>true</force>
+					<jswarn>false</jswarn>
+					<excludes>
+						<exclude>**/macula-ui-1.0.0.js</exclude>
+						<exclude>**/*.min.js</exclude>
+						<exclude>**/*.min.css</exclude>
+						<exclude>**/mower/**/bootstrap/**</exclude>
+						<exclude>**/mower/**/libs/**</exclude>
+						<exclude>**/mower/**/mower/**</exclude>
+						<exclude>**/mower/**/mvc/**</exclude>
+					</excludes>
+					<aggregations>
+						<aggregation>
+							<insertNewLine>true</insertNewLine>
+							<output>${project.build.directory}/yui_webmin/resources/admin/macula-ui-1.0.0/macula-ui-1.0.0.min.js</output>
+							<inputDir>${project.build.directory}/yui_webmin/resources/admin/macula-ui-1.0.0/plugins</inputDir>
+							<includes>
+								<include>*.min.js</include>
+							</includes>
+						</aggregation>
+						<aggregation>
+							<insertNewLine>true</insertNewLine>
+							<output>${project.build.directory}/yui_webmin/resources/admin/macula-ui-1.0.0/themes/default/macula-ui-1.0.0.min.css</output>
+							<inputDir>${project.build.directory}/yui_webmin/resources/admin/macula-ui-1.0.0/themes/default</inputDir>
+							<includes>
+								<include>*.min.css</include>
+							</includes>
+							<excludes>
+								<exclude>macula-ui-1.0.0.min.css</exclude>
+							</excludes>
+						</aggregation>
+					</aggregations>
+					<webappDirectory>${project.build.directory}/yui_webmin</webappDirectory>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<profiles>
+		<profile>
+			<id>release</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-war-plugin</artifactId>
+						<configuration>
+							<packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes>
+							<webResources>
+								<resource>
+									<directory>src/main/webapp/resources/admin/macula-ui-1.0.0</directory>
+									<targetPath>resources/front/macula-ui-1.0.0</targetPath>
+								</resource>
+								<resource>
+									<directory>${project.build.directory}/yui_webmin/resources/admin/macula-ui-1.0.0</directory>
+									<targetPath>resources/front/macula-ui-1.0.0</targetPath>
+								</resource>
+								<resource>
+									<directory>${project.build.directory}/yui_webmin</directory>
+								</resource>
+							</webResources>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>snapshot</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-war-plugin</artifactId>
+						<configuration>
+							<packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes>
+							<webResources>
+								<resource>
+									<directory>target/test-classes</directory>
+									<targetPath>WEB-INF/classes</targetPath>
+								</resource>
+								<resource>
+									<directory>src/main/webapp/resources/admin/macula-ui-1.0.0</directory>
+									<targetPath>resources/front/macula-ui-1.0.0</targetPath>
+								</resource>
+								<resource>
+									<directory>${project.build.directory}/yui_webmin/resources/admin/macula-ui-1.0.0</directory>
+									<targetPath>resources/front/macula-ui-1.0.0</targetPath>
+								</resource>
+								<resource>
+									<directory>${project.build.directory}/yui_webmin</directory>
+								</resource>
+							</webResources>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+</project>

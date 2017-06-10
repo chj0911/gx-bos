@@ -1,0 +1,155 @@
+body, html {
+    height: 100%;
+    -webkit-tap-highlight-color: transparent;
+    background: #efefef;
+    font-family: "微软雅黑";
+    position: relative;
+}
+
+a {
+    color: #fb5858;
+    text-decoration: none;
+}
+
+a:active, a:hover {
+    outline: 0;
+    text-decoration: none;
+}
+
+header {
+    background: #fb5858;
+    text-align: center;
+    height: 50px;
+    line-height: 50px;
+    color: #fdfdfd;
+    font-size: 1.2em;
+    position: fixed;
+    z-index: 9999;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+
+header .weui-col-33:first-child {
+    text-align: left;
+    padding-left: 15px;
+}
+
+header .weui-col-33:last-child {
+    text-align: right;
+    padding-right: 15px;
+}
+
+header .weui-col-33:last-child a {
+    color: #fff;
+    font-size: 15px
+}
+
+header .weui-col-33:first-child .icon {
+    width: 25px;
+    height: 25px;
+    background-image: url(../images/iconp2p.png);
+    background-position: 0 -75px;
+    background-size: 500%;
+}
+
+header .weui-col-33:last-child .icon {
+    width: 25px;
+    height: 25px;
+    background-image: url(../images/iconp2p.png);
+    background-size: 500%;
+}
+
+header .weui-col-33:last-child .icon.icon-user {
+    background-position: -75px -75px;
+}
+
+header .weui-col-33:last-child .icon.icon-bell {
+    background-position: -100px -75px;
+    position: relative;
+}
+
+header .weui-col-33:last-child .icon.icon-bell span {
+    position: absolute;
+    font-size: 0.7em;
+    border: 1px solid #fff;
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    line-height: 15px;
+    text-align: center;
+    left: 17px;
+    top: -8px;
+    color: #fff !important;
+}
+
+header .weui-col-33:nth-last-child(2) {
+    font-size: 0.9em;
+}
+
+.weui_tabbar {
+    position: fixed;
+}
+
+.content-padded {
+    padding-top: 50px;
+    padding-bottom: 70px;
+}
+
+header .weui-col-33:last-child .icon.icon-delete {
+    background-position: -75px -100px;
+    cursor: pointer;
+}
+
+/*公共底*/
+.weui_tabbar_icon > .icon {
+    width: 30px;
+    height: 30px;
+    background-image: url(../images/iconp2p.png);
+    background-size: 500%;
+}
+
+.weui_tabbar_icon > .icon.icon-sy {
+    background-position: 0 0;
+}
+
+.weui_tabbar_icon > .icon.icon-tz {
+    background-position: -30px 0;
+}
+
+.weui_tabbar_icon > .icon.icon-hd {
+    background-position: -60px 0;
+}
+
+.weui_tabbar_icon > .icon.icon-cf {
+    background-position: -90px 0;
+}
+
+.weui_tabbar_item.weui_bar_item_on .weui_tabbar_label {
+    color: #fb5858 !important;
+}
+
+.weui_tabbar_item.weui_bar_item_on .weui_tabbar_icon > .icon.icon-sy {
+    background-position: 0 -30px;
+}
+
+.weui_tabbar_item.weui_bar_item_on .weui_tabbar_icon > .icon.icon-tz {
+    background-position: -30px -30px;
+}
+
+.weui_tabbar_item.weui_bar_item_on .weui_tabbar_icon > .icon.icon-hd {
+    background-position: -60px -30px;
+}
+
+.weui_tabbar_item.weui_bar_item_on .weui_tabbar_icon > .icon.icon-cf {
+    background-position: -90px -30px;
+}
+
+.nothing {
+    text-align: center;
+    color: #adadad;
+    padding: 50px 0;
+}
+
+
