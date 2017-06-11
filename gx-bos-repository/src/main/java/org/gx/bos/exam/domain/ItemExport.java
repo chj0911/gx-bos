@@ -7,10 +7,8 @@ import org.macula.core.domain.AbstractAuditable;
  * <p>
  * <b>ItemExport</b>
  * </p>
+ * @author JunChen
  *
- * @since 2016/6/1.
- * @author lpc
- * @version 2.0
  */
 public class ItemExport extends AbstractAuditable<Long> {
 

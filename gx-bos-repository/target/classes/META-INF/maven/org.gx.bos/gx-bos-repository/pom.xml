@@ -16,6 +16,27 @@
 			<groupId>org.macula</groupId>
 			<artifactId>macula-core</artifactId>
 		</dependency>
+		
+		<dependency>
+			<groupId>org.macula</groupId>
+			<artifactId>macula-base</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.infinitus.eln</groupId>
+			<artifactId>eln-base-core</artifactId>
+		</dependency>		
+		
+		<dependency>
+			<groupId>com.qiniu</groupId>
+			<artifactId>qiniu-java-sdk</artifactId>
+			<version>[7.2.0, 7.2.99]</version>
+			<exclusions>  
+		        <exclusion>  
+		            <groupId>com.squareup.okio</groupId>
+  					<artifactId>okio</artifactId> 
+		        </exclusion>  
+		    </exclusions>
+		</dependency>
 	</dependencies>
 
 </project>

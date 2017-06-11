@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.gx.bos.domain;
+package org.gx.bos.demo.domain;
 
 import java.util.ArrayList;
 import java.util.List;

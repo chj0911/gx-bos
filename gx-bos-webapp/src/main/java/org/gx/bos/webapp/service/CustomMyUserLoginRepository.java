@@ -33,7 +33,7 @@ public class CustomMyUserLoginRepository implements CustomUserLoginRepository {
 		// TODO 以下代码需要替换
 		// 在开发环境下，如果没有实现用户Respository，则提供一个超级密码
 		if (MaculaConstants.RUN_MODE_DEV.equals(Configuration.getRunMode())) {
-			return new UserPrincipalImpl(username, passwordEncoder.encode("infi123*"));
+			return new UserPrincipalImpl(username, passwordEncoder.encode("123"));
 		}
 		return new UserPrincipalImpl(username);
 		

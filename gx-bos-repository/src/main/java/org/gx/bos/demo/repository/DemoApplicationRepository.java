@@ -13,22 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.gx.bos.repository;
+package org.gx.bos.demo.repository;
 
 import java.util.List;
 
-import org.gx.bos.domain.DemoApplication;
-import org.gx.bos.domain.DemoApplicationInstance;
+import org.gx.bos.demo.domain.DemoApplication;
 import org.macula.core.repository.MaculaJpaRepository;
 
 /**
- * <p> </p>
+ * <p> <b>ApplicationRepository</b> 是Application的存储接口. </p>
  * 
- * @since 2011-2-23
+ * @since 2010-12-29
  * @author Wilson Luo
- * @version $Id: DemoApplicationInstanceRepository.java 5956 2015-11-17 03:48:27Z wzp $
+ * @version $Id: DemoApplicationRepository.java 5956 2015-11-17 03:48:27Z wzp $
  */
-public interface DemoApplicationInstanceRepository extends MaculaJpaRepository<DemoApplicationInstance, Long> {
+public interface DemoApplicationRepository extends MaculaJpaRepository<DemoApplication, Long> {
 
-	List<DemoApplicationInstance> findByApplication(DemoApplication application);
+	DemoApplication findByAppId(String appId);
+
+	List<DemoApplication> findByAppGroup(String appGroup);
+
 }

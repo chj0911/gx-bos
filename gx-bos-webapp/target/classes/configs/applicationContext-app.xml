@@ -91,8 +91,14 @@
 				<property name="defaultDataSource" ref="gx-bos_dataSource" />
 				<property name="packagesToScan">
 					<array>
-						<value>org.gx.bos.domain</value>
+						<value>org.gx.bos.demo.domain</value>
+						<value>org.gx.bos.base.core.dealer.domain.base</value>
+						<value>org.gx.bos.base.core.dealer.domain</value>
+						<value>org.gx.bos.base.core.user.domain</value>
 						<value>org.gx.bos.exam.domain</value>
+						<value>org.gx.bos.info.domain.base</value>
+						<value>org.gx.bos.info.domain</value>
+						<value>org.gx.bos.course.domain</value>
 					</array>
 				</property>
 			</bean>

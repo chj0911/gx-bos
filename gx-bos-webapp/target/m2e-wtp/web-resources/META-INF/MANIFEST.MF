@@ -1,4 +1,4 @@
-Manifest-Version: gx-bos-${environment}[0.0.1-SNAPSHOT.b170610]
+Manifest-Version: gx-bos-${environment}[0.0.1-SNAPSHOT.b170611]
 Built-By: JunChen
 Build-Jdk: 1.8.0_92
 Created-By: Maven Integration for Eclipse

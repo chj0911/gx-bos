@@ -7,8 +7,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.gx.bos.api.DemoApi;
-import org.gx.bos.domain.DemoApplication;
-import org.gx.bos.repository.DemoApplicationRepository;
+import org.gx.bos.demo.domain.DemoApplication;
+import org.gx.bos.demo.repository.DemoApplicationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

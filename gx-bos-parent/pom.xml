@@ -12,8 +12,8 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jdkLevel>1.7</jdkLevel>
 		<jvmargs>-XX:MaxPermSize=384m -Xms512m -Xmx1024m</jvmargs>
-		<macula.version>3.0.0.M1</macula.version>
-		<macula.plugins.version>3.0.0.M1</macula.plugins.version>
+		<macula.version>3.0.0.M4</macula.version>
+		<macula.plugins.version>3.0.0.M4</macula.plugins.version>
 		<mockito.version>1.10.19</mockito.version>
 		<junit.version>4.12</junit.version>
 		<hsql.version>2.3.4</hsql.version>
@@ -23,6 +23,7 @@
 		<oracle.version>11.2.0.3.0</oracle.version>
 		<mysql.version>5.1.35</mysql.version>
 		<liquibase.version>3.0.8</liquibase.version>
+		<infinitus.version>1.0.0-SNAPSHOT</infinitus.version>
 	</properties>
 
 	<repositories>
@@ -164,6 +165,11 @@
 				<groupId>org.macula.plugins</groupId>
 				<artifactId>macula-plugins-cat</artifactId>
 				<version>${macula.plugins.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.infinitus.eln</groupId>
+				<artifactId>eln-base-core</artifactId>
+				<version>${infinitus.version}</version>
 			</dependency>				
 			<dependency>
 				<groupId>org.macula.plugins</groupId>

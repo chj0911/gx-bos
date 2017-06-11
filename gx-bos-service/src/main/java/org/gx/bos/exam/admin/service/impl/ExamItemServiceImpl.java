@@ -1,10 +1,11 @@
-package org.gx.bos.exam.service.impl;
+package org.gx.bos.exam.admin.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.gx.bos.base.core.utils.CollectionUtils;
+import org.gx.bos.exam.admin.service.ExamItemService;
 import org.gx.bos.exam.domain.ExamItem;
 import org.gx.bos.exam.domain.ItemAnswer;
 import org.gx.bos.exam.domain.ItemBase;
@@ -12,7 +13,6 @@ import org.gx.bos.exam.domain.ItemExport;
 import org.gx.bos.exam.repository.ExamItemRepository;
 import org.gx.bos.exam.repository.ItemAnswerRepository;
 import org.gx.bos.exam.repository.ItemBaseRepository;
-import org.gx.bos.exam.service.ExamItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

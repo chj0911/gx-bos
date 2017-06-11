@@ -9,10 +9,27 @@
 			http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
 			http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
 
-	<jpa:repositories base-package="org.gx.bos.repository" entity-manager-factory-ref="entityManagerFactory_gx-bos"
+	<!-- demo -->
+	<jpa:repositories base-package="org.gx.bos.demo.repository" entity-manager-factory-ref="entityManagerFactory_gx-bos"
+		transaction-manager-ref="transactionManager_gx-bos" factory-class="org.macula.core.repository.MaculaJpaRepositoryFactoryBean" />
+	<!-- exam -->
+	<jpa:repositories base-package="org.gx.bos.exam.repository" entity-manager-factory-ref="entityManagerFactory_gx-bos"
 		transaction-manager-ref="transactionManager_gx-bos" factory-class="org.macula.core.repository.MaculaJpaRepositoryFactoryBean" />
 	
-	<jpa:repositories base-package="org.gx.bos.exam.repository" entity-manager-factory-ref="entityManagerFactory_gx-bos"
+	<!-- dealer -->
+	<jpa:repositories base-package="org.gx.bos.base.core.dealer.repository" entity-manager-factory-ref="entityManagerFactory_gx-bos"
+		transaction-manager-ref="transactionManager_gx-bos" factory-class="org.macula.core.repository.MaculaJpaRepositoryFactoryBean" />
+	
+	<!-- user -->
+	<jpa:repositories base-package="org.gx.bos.base.core.user.repository" entity-manager-factory-ref="entityManagerFactory_gx-bos"
+		transaction-manager-ref="transactionManager_gx-bos" factory-class="org.macula.core.repository.MaculaJpaRepositoryFactoryBean" />
+	
+	<!-- info -->
+	<jpa:repositories base-package="org.gx.bos.info.repository" entity-manager-factory-ref="entityManagerFactory_gx-bos"
+		transaction-manager-ref="transactionManager_gx-bos" factory-class="org.macula.core.repository.MaculaJpaRepositoryFactoryBean" />
+	
+	<!-- courseInfo -->
+	<jpa:repositories base-package="org.gx.bos.course.repository" entity-manager-factory-ref="entityManagerFactory_gx-bos"
 		transaction-manager-ref="transactionManager_gx-bos" factory-class="org.macula.core.repository.MaculaJpaRepositoryFactoryBean" />
 
 </beans> 

@@ -19,7 +19,7 @@
         <dependent-module archiveName="gx-bos-mobile-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/gx-bos-mobile/gx-bos-mobile">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module deploy-path="/" handle="module:/overlay/var/M2_REPO/org/macula/plugins/macula-plugins-webapp/3.0.0.M1/macula-plugins-webapp-3.0.0.M1.war?unpackFolder=target/m2e-wtp/overlays&amp;includes=**/**&amp;excludes=META-INF/MANIFEST.MF">
+        <dependent-module deploy-path="/" handle="module:/overlay/var/M2_REPO/org/macula/plugins/macula-plugins-webapp/3.0.0.M4/macula-plugins-webapp-3.0.0.M4.war?unpackFolder=target/m2e-wtp/overlays&amp;includes=**/**&amp;excludes=META-INF/MANIFEST.MF">
             <dependency-type>consumes</dependency-type>
         </dependent-module>
         <dependent-module deploy-path="/" handle="module:/overlay/slf/?includes=**/**&amp;excludes=META-INF/MANIFEST.MF">

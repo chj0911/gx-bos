@@ -55,7 +55,7 @@
 	<build>
 		<finalName>gx-bos-webapp</finalName>
 		<plugins>
-			<plugin>
+			<!-- <plugin>
 				<groupId>net.alchim31.maven</groupId>
 				<artifactId>yuicompressor-maven-plugin</artifactId>
 				<version>1.5.1</version>
@@ -70,17 +70,17 @@
 					<resources></resources>
 					<webappDirectory>${project.build.directory}/yui_webmin</webappDirectory>
 				</configuration>
-			</plugin>
+			</plugin> -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
 				<version>2.6</version>
 				<configuration>
-					<webResources>
+				<!-- <webResources>
 						<resource>
 							<directory>${project.build.directory}/yui_webmin</directory>
 						</resource>
-					</webResources>
+					</webResources> -->
 					<archive>
 						<manifestEntries>
 							<Manifest-Version>gx-bos-${environment}[${project.version}.b${buildNumber}]</Manifest-Version>

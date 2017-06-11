@@ -17,7 +17,7 @@ package org.gx.bos.demo.service;
 
 import java.util.List;
 
-import org.gx.bos.domain.DemoApplication;
+import org.gx.bos.demo.domain.DemoApplication;
 
 
 /**

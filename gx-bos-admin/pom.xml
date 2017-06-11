@@ -16,5 +16,13 @@
 			<artifactId>gx-bos-service</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		
+		<!-- POI -->
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>3.9</version>
+		</dependency>
+		
 	</dependencies>
 </project>

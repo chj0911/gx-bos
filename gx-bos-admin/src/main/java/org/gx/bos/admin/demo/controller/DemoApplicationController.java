@@ -20,9 +20,9 @@ import java.util.ArrayList;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.gx.bos.demo.domain.DemoApplication;
+import org.gx.bos.demo.domain.DemoApplicationInstance;
 import org.gx.bos.demo.service.DemoApplicationService;
-import org.gx.bos.domain.DemoApplication;
-import org.gx.bos.domain.DemoApplicationInstance;
 import org.macula.core.exception.FormBindException;
 import org.macula.core.mvc.annotation.FormBean;
 import org.macula.core.mvc.annotation.OpenApi;

@@ -14,13 +14,9 @@ import org.macula.core.hibernate.audit.Auditable;
 
 
 /**
- * <p>
  * <b>Item</b>考试试题
- * </p>
+ * @author JunChen
  *
- * @since 2016年9月2日
- * @author yrs
- * @version 2.0
  */
 @Entity
 @DynamicInsert

@@ -1,4 +1,4 @@
-package org.gx.bos.exam.service;
+package org.gx.bos.exam.admin.service;
 
 import java.util.List;
 
