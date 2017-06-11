@@ -37,6 +37,14 @@
 	<!-- 这里需要根据系统是admin、front、mobile作出修改 -->
 	<!-- 
 	<mvc:view-controller path="/" view-name="redirect:/admin" />
+	resources/admin/macula-ui-1.0.0/plugins
 	-->
+	
+	<!-- 静态资源解析 包括 ：js、css、img-->
+     <mvc:resources location="/resources/admin/js/" mapping="/resources/admin/js/**"/>
+     <mvc:resources location="/resources/admin/images/" mapping="/resources/admin/images/**"/>
+     <mvc:resources location="/resources/admin/css/" mapping="/resources/admin/css/**"/>
+     <mvc:resources location="/resources/admin/infocenter/" mapping="/resources/admin/infocenter/**"/>
+     <mvc:resources location="/resources/admin/My97DatePicker/" mapping="/resources/admin/My97DatePicker/**"/>
 	
 </beans>

@@ -1,4 +1,4 @@
-<script type="text/javascript" src = "${base}/resources/admin/macula-ui-1.0.0/plugins/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src = "${base}/resources/admin/My97DatePicker/WdatePicker.js"></script>
 <script type="text/javascript" src = "${base}/resources/admin/js/jquery.validate.js"></script>
 <script type="text/javascript" src = "${base}/resources/admin/js/validate.js"></script>
 <script type="text/javascript" src = "${base}/resources/admin/js/jquery.metadata.js"></script>
@@ -24,8 +24,9 @@
 <script type="text/javascript" src="${base}/resources/admin/infocenter/winnerList/ueditor.all.min.js" ></script>
 <script type="text/javascript" src="${base}/resources/admin/infocenter/winnerList/lang/zh-cn/zh-cn.js" ></script>
 
-<#--日期控件-->
-<script type="text/javascript" src="${base}/resources/admin/macula-ui-1.0.0/plugins/My97DatePicker/WdatePicker.js"></script>
+<#--日期控件
+<script type="text/javascript" src="${base}/resources/admin/My97DatePicker/WdatePicker.js"></script>
+-->
 <#--
 <script type="text/javascript" src="${base}/resources/admin/js/multiselect/bootstrap-multiselect.js"></script>
 -->
